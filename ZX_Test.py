@@ -9,6 +9,28 @@
 # You can use any Natural Language Processing models for this part of the project 
 # (use existing models or develop your own).
 
+import math
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+model     = AutoModelForSequenceClassification.from_pretrained("Souvikcmsa/SentimentAnalysisDistillBERT",)
+tokenizer = AutoTokenizer.from_pretrained("Souvikcmsa/SentimentAnalysisDistillBERT",)
+
+inputs = tokenizer(["I love AutoTrain", "I am happy that you called me, but I don't like the way you talk. " ], return_tensors = "pt", padding = True)
+outputs = model(**inputs)
+logits = outputs["logits"].cpu().detach().numpy()
+print()
+
+for i in logits:
+    print(math.exp(i[0]) / ( math.exp(i[0])+math.exp(i[1])+math.exp(i[2]) ))
+    print(math.exp(i[1]) / ( math.exp(i[0])+math.exp(i[1])+math.exp(i[2]) ))
+    print(math.exp(i[2]) / ( math.exp(i[0])+math.exp(i[1])+math.exp(i[2]) ))
+
+
+
+
+
+
+aa=bb
+
 
 
 

@@ -56,31 +56,32 @@ import requests
 import argparse
 import numpy as np
 import pandas as pd
-#--------------------------------------------------#
-
-# import xmltodict
-#--------------------------------------------------#
-from timeit import timeit
 
 #--------------------------------------------------#
 import urllib
 import xml.etree.ElementTree as ET
-#--------------------------------------------------#
-
-
-#--------------------------------------------------#
-from datasets import load_metric
 from urllib.request import urlopen
+#--------------------------------------------------#
+
 
 #--------------------------------------------------#
 from sklearn.model_selection import train_test_split
 
 #--------------------------------------------------#
+# Pretrained Models.
+# Topic Models
+from bertopic import BERTopic
+from flair.embeddings import TransformerDocumentEmbeddings
+
+# Language Models.
 from transformers import RobertaForSequenceClassification, RobertaTokenizerFast, Trainer, TrainingArguments
 
-#--------------------------------------------------#
-from ZX_Part_3_utils import *
 
+
+
+
+#--------------------------------------------------#
+from ZX_Course_Project_utils import *
 
 
 
@@ -108,6 +109,10 @@ You can use any Natural Language Processing models for this part of the project
 (use existing models or develop your own).
 '''
 
+data_folder = Path("./data_folder")
+data_file_1   = "Part_2_Dataset_1_reddit_raw_ukraine_russia.csv"
+data_file_2   = "Part_2_Dataset_2_russian_invasion_of_ukraine.csv"
+
 
 
 
@@ -122,82 +127,107 @@ You can use any Natural Language Processing models for this part of the project
 #    .JMML.    .JMML. .JMM.JMMmmmmMMM .JMML.    .JMML. .JMM. `"bmmd"'     `"bmmmd'  .JMMmmmmMMM P"Ybmmd"  P"Ybmmd"  .JMML..JML.    YM   `"bmmmdPY      #
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$#
 
-#%%
-# Load data
-#====================================================================================================#
-data_folder = Path("./data_folder")
-data_file   = "sentiment_analysis.csv"
-
-
-
-
-# Load data
-#====================================================================================================#
-# For clearly print a dataframe. 
-def beautiful_print(df): # Print the DataFrame obtained.
-    # Print the dataset in a well-organized format.
-    with pd.option_context('display.max_rows'       , 20   , 
-                           'display.min_rows'       , 20   , 
-                           'display.max_columns'    , 15   , 
-                           "display.max_colwidth"   , 100 ,
-                           "display.width"          , None ,
-                           "expand_frame_repr"      , True ,
-                           "max_seq_items"          , None , ):  # more options can be specified
-        # Once the display.max_rows is exceeded, 
-        # the display.min_rows options determines 
-        # how many rows are shown in the truncated repr.
-        print(df)
-    return 
 
 #====================================================================================================#
-# Load data with "ISO-8859-1" encoding.
-df_raw = pd.read_csv(filepath_or_buffer   =   data_folder/data_file             ,
-                     header               =   0                                 , 
-                     #index_col           =   0                                 ,
-                     encoding             =   "ISO-8859-1"                      ,
-                     sep                  =   ','                               ,  
-                     low_memory           =   False                             , )
-
-# Print dimension of the raw data.
-print("\nRaw dataset printed below. ")
-print("df_raw.shape: ", df_raw.shape) # 298 column
-beautiful_print(df_raw)
-
-def remove_unicode(str_x):
-    return str_x.encode("ascii", "ignore").decode()
-
-def clean_text_LM(text):
-    text = re.sub(r'<.*?>', '', text)                    # Remove HTML tags
-    text = re.sub(r'@[A-Za-z0-9_:]+', '', text)          # Remove User tags
-    text = re.sub(r'https?://[A-Za-z0-9./]+', '', text)  # Remove URLs
-    #text = re.sub(r'[^A-Za-z0-9 ]+', '', text)          # Remove non-alphanumeric characters
-    text = re.sub(r'#(\S+)', r'\1', text)                # Remove "#" in Hashtags.
-    text = re.sub(r'^RT ', '', text)                     # Remove Retweet
-    return remove_unicode(text.strip())
-
-def clean_text(text):
-    text = re.sub(r'<.*?>', '', text)                    # Remove HTML tags
-    text = re.sub(r'@[A-Za-z0-9_:]+', '', text)            # Remove user tags
-    text = re.sub(r'https?://[A-Za-z0-9./]+', '', text)  # Remove URLs
-    text = re.sub(r'[^A-Za-z0-9 ]+', '', text)           # Remove non-alphanumeric characters
-    text = re.sub(r'#(\S+)', r'\1', text)                # Remove "#" in Hashtags.
-    text = re.sub(r'^RT ', '', text)                     # Remove Retweet
-    return remove_unicode(text.strip()).lower()
+def Load_dataset_1():
+    # Load dataset #1 with "ISO-8859-1" encoding.
+    df_raw_1 = pd.read_csv(filepath_or_buffer   =   data_folder/data_file_1           , 
+                           header               =   0                                 , 
+                           index_col            =   0                                 , 
+                           encoding             =   "ISO-8859-1"                      , 
+                           sep                  =   ','                               , 
+                           low_memory           =   False                             , 
+                           )
 
 
-df_raw['cleaned_text'] = df_raw['text'].apply(clean_text_LM)
+    # Print size of the raw dataset.
+    print("\n\n" + "="*80)
+    # print("\n" + "=" * 80 + "\nRaw dataset printed below: (Only showing useful columns)")
+    print("df_raw_1.shape: ", df_raw_1.shape) # 4 columns. 
+    # Remove Useless columnns directly.
+    df_raw_1 = df_raw_1.drop(columns=["date", "post_id", "comment_id"]) 
+    return df_raw_1
 
-df_cleaned = copy.deepcopy(df_raw).drop(columns=["ID", "text"])
-df_cleaned.insert(len(df_cleaned.columns)-1, "label", df_cleaned.pop('label') ) 
+#====================================================================================================#
+def Load_dataset_2():
+    # Load dataset #2 with "ISO-8859-1" encoding.
+    df_raw_2 = pd.read_csv(filepath_or_buffer   =   data_folder/data_file_2           ,
+                           header               =   0                                 , 
+                           #index_col           =   0                                 ,
+                           encoding             =   "ISO-8859-1"                      ,
+                           sep                  =   ','                               ,  
+                           low_memory           =   False                             , 
+                           )
 
-print("\nProcessed dataset printed below. ")
-print("df_cleaned.shape: ", df_cleaned.shape) # 298 column
-beautiful_print(df_cleaned)
+    # Print dimension of the raw data.
+    # print("\n\n" + "=" * 80 + "\nRaw dataset printed below: (Only showing useful columns)")
+    print("df_raw_2.shape: ", df_raw_2.shape) # 8 columns. 
+    # Remove Useless columnns directly.
+    df_raw_2 = df_raw_2.drop(columns=[ "score" , "id" , "url" , "comms_num" , "created" , "timestamp" ]) 
+    df_raw_2.loc[df_raw_2["title"] == "Comment", "title"] = ""
+    # Combine title and comments since title contains useful info.
+    df_raw_2['comments'] = df_raw_2["title"].astype(str) + " . " + df_raw_2["body"].astype(str)
+    def fix_string(s):
+        return s[3:] if s.startswith(" . ") else s
+    df_raw_2['comments'] = df_raw_2['comments'].apply(fix_string)
+    return df_raw_2
 
-print(df_cleaned['label'].value_counts())
 
 
-#%%
+#====================================================================================================#
+def Clean_data(df_raw_n, num_words_lb): # num_words_lb is the minimum number of words in one sentence.
+
+    # Get a copy of the raw.
+    df_cleaned_n = copy.deepcopy(df_raw_n) 
+
+    # Drop nan values in the columns.
+    df_cleaned_n = df_cleaned_n.dropna() 
+
+    # Rename columns.
+    df_cleaned_n['cleaned_text'] = df_cleaned_n['comments'] 
+    df_cleaned_n = df_cleaned_n.drop(columns=["comments"])  
+
+    # Make a copy.
+    df_cleaned_n_all = df_cleaned_n.copy(deep = True)
+
+    # Clean.
+    df_cleaned_n_all['cleaned_text'] = df_cleaned_n_all['cleaned_text']     \
+                                                .apply(clean_text_preproc)  \
+                                                .apply(clean_text_LM)       \
+                                                .apply(clean_text_preproc)
+
+    # Check duplicates
+    print("\n\n" + "=" * 125 + "\nCheck for duplicates (mostly deleted/short answer): ")
+    print(df_cleaned_n_all['cleaned_text'].value_counts().reset_index()) # Lots of duplciates
+
+    # Identify language. (Skipped)
+    #   - Use a saved processed dataframe if found in the savings, otherwise generate a new one. 
+    #   - Skipped since non-English text are negligible.
+
+    # DROP DUPLICATES !
+    df_cleaned_n_all = df_cleaned_n_all.drop_duplicates(subset = ['cleaned_text'], keep = 'first')
+
+    # Check Meaningless Comments
+    text_list_n = df_cleaned_n_all['cleaned_text'].values.tolist()
+    for text_x in text_list_n:
+        if len(text_x) == 1 or text_x == "" or text_x == "thank you" or text_x.count(" ") == num_words_lb-1:
+            # Remove one-word answer. May contain sentiment but require context to understand exact meaning.
+            # Even two-words can be meaningful. For example, fuck p***n.
+            text_list_n.remove(text_x)
+        if text_x.find("i am a bot") != -1: # Remove bot messages.
+            text_list_n.remove(text_x)
+        
+        # Removing all short answer can be a option.
+        """
+        if text_x.count(" ") <= 2:
+            text_list_1.remove(text_x)
+        """
+
+    df_cleaned_n_all = pd.DataFrame(text_list_n, columns = ['cleaned_text'])
+    print("\n\n" + "=" * 125 + "\nCleaned Part 2 Dataset: ")
+    beautiful_print(df_cleaned_n_all)
+
+    return df_cleaned_n_all
 
 #====================================================================================================#
 
@@ -206,6 +236,73 @@ print(df_cleaned['label'].value_counts())
 
 
 
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$#
+#      MMP""MM""YMM   .g8""8q. `7MM"""Mq.`7MMF' .g8"""bgd          db     `7MN.   `7MF'     db     `7MMF'   `YMM'   `MM'.M"""bgd `7MMF' .M"""bgd       #
+#      P'   MM   `7 .dP'    `YM. MM   `MM. MM .dP'     `M         ;MM:      MMN.    M      ;MM:      MM       VMA   ,V ,MI    "Y   MM  ,MI    "Y       #
+#           MM      dM'      `MM MM   ,M9  MM dM'       `        ,V^MM.     M YMb   M     ,V^MM.     MM        VMA ,V  `MMb.       MM  `MMb.           #
+#           MM      MM        MM MMmmdM9   MM MM                ,M  `MM     M  `MN. M    ,M  `MM     MM         VMMP     `YMMNq.   MM    `YMMNq.       #
+#           MM      MM.      ,MP MM        MM MM.               AbmmmqMA    M   `MM.M    AbmmmqMA    MM      ,   MM    .     `MM   MM  .     `MM       #
+#           MM      `Mb.    ,dP' MM        MM `Mb.     ,'      A'     VML   M     YMM   A'     VML   MM     ,M   MM    Mb     dM   MM  Mb     dM       #
+#         .JMML.      `"bmmd"' .JMML.    .JMML. `"bmmmd'     .AMA.   .AMMA.JML.    YM .AMA.   .AMMA.JMMmmmmMMM .JMML.  P"Ybmmd"  .JMML.P"Ybmmd"        #
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$#
+
+####################################################################################################################
+#              `7MM"""Yp, `7MM"""YMM  `7MM"""Mq. MMP""MM""YMM   .g8""8q. `7MM"""Mq.`7MMF' .g8"""bgd                #
+#                MM    Yb   MM    `7    MM   `MM.P'   MM   `7 .dP'    `YM. MM   `MM. MM .dP'     `M                #
+#                MM    dP   MM   d      MM   ,M9      MM      dM'      `MM MM   ,M9  MM dM'       `                #
+#                MM"""bg.   MMmmMM      MMmmdM9       MM      MM        MM MMmmdM9   MM MM                         #
+#                MM    `Y   MM   Y  ,   MM  YM.       MM      MM.      ,MP MM        MM MM.                        #
+#                MM    ,9   MM     ,M   MM   `Mb.     MM      `Mb.    ,dP' MM        MM `Mb.     ,'                #
+#              .JMMmmmd9  .JMMmmmmMMM .JMML. .JMM.  .JMML.      `"bmmd"' .JMML.    .JMML. `"bmmmd'                 #
+####################################################################################################################
+
+#====================================================================================================#
+# BERTopic - "all-mpnet-base-v2"
+def BERTopic_mpnet_base(
+                        df_cleaned_n_all   = None                             ,
+                        saved_fitted_model = "Saving_BERTopic_mpnet_base_.p"  ,
+                        saving_folder      = Path("./Saving_Model")           ,
+                       ):
+
+    # Load text data into a list.
+    dateset_n_text_list = df_cleaned_n_all["cleaned_text"].values.tolist()
+
+    if os.path.exists(saving_folder / saved_fitted_model):
+        topic_model = pickle.load(open(saving_folder / saved_fitted_model, 'rb'))
+    else:
+        # Tune the pretrained model.
+        topic_model = BERTopic(embedding_model="all-mpnet-base-v2").fit(dateset_n_text_list)
+        pickle.dump(topic_model, open(saving_folder / saved_fitted_model, 'wb'))
+        pass
+
+    print(topic_model.get_topic_info().head(10))
+
+    return
+
+
+#====================================================================================================#
+# BERTopic - "all-mpnet-base-v2"
+def BERTopic_roberta_base(
+                          df_cleaned_n_all   = None                               ,
+                          saved_fitted_model = "Saving_BERTopic_roberta_base_.p"  ,
+                          saving_folder      = Path("./Saving_Model")             ,
+                         ):
+
+    # Load text data into a list.
+    dateset_n_text_list = df_cleaned_n_all["cleaned_text"].values.tolist()
+
+    if os.path.exists(saving_folder / saved_fitted_model):
+        topic_model = pickle.load(open(saving_folder / saved_fitted_model, 'rb'))
+    else:
+        # Tune the pretrained model.
+        roberta = TransformerDocumentEmbeddings('roberta-base')
+        topic_model = BERTopic(embedding_model = roberta).fit(dateset_n_text_list)
+        pickle.dump(topic_model, open(saving_folder / saved_fitted_model, 'wb'))
+        pass
+
+    print(topic_model.get_topic_info().head(10))
+
+    return
 
 
 
@@ -220,16 +317,69 @@ print(df_cleaned['label'].value_counts())
 
 
 
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$#
+#   `7MMM.     ,MMF'      db      `7MMF'`7MN.   `7MF'                 M             M             M                                                    #
+#     MMMb    dPMM       ;MM:       MM    MMN.    M                   M             M             M                                                    #
+#     M YM   ,M MM      ,V^MM.      MM    M YMb   M                   M             M             M                                                    #
+#     M  Mb  M' MM     ,M  `MM      MM    M  `MN. M               `7M'M`MF'     `7M'M`MF'     `7M'M`MF'                                                #
+#     M  YM.P'  MM     AbmmmqMA     MM    M   `MM.M                 VAMAV         VAMAV         VAMAV                                                  #
+#     M  `YM'   MM    A'     VML    MM    M     YMM                  VVV           VVV           VVV                                                   #
+#   .JML. `'  .JMML..AMA.   .AMMA..JMML..JML.    YM                   V             V             V                                                    #
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$#
+# 
+if __name__ == "__main__":
+
+    #====================================================================================================#
+    # Args
+    Step_code               = "P03A_"
+    saved_preproc_dataset_1 = "Saving_preproc_dataset_1.p"
+    saved_preproc_dataset_2 = "Saving_preproc_dataset_2.p"
+    reprocess_dataset       = False
+
+    #====================================================================================================#
+    # Process Data 
+    if os.path.exists(saved_preproc_dataset_1) and not reprocess_dataset: 
+        df_cleaned_1_all = pd.read_pickle(saved_preproc_dataset_1)
+        print("\n\n" + "=" * 125 + "\nCleaned Part 2 Dataset #1 : ")
+        beautiful_print(df_cleaned_1_all)
+    else:
+        df_raw_1 = Load_dataset_1()
+        df_cleaned_1_all = Clean_data(df_raw_1, num_words_lb = 2)
+        df_cleaned_1_all.to_pickle(saved_preproc_dataset_1)
+
+    if os.path.exists(saved_preproc_dataset_2) and not reprocess_dataset: 
+        df_cleaned_2_all = pd.read_pickle(saved_preproc_dataset_2)
+        print("\n\n" + "=" * 125 + "\nCleaned Part 2 Dataset #2 : ")
+        beautiful_print(df_cleaned_2_all)
+    else:
+        df_raw_2 = Load_dataset_2()
+        df_cleaned_2_all = Clean_data(df_raw_2, num_words_lb = 2)
+        df_cleaned_2_all.to_pickle(saved_preproc_dataset_2)
+
+    # df_cleaned_1_all.to_csv(path_or_buf = "Saving_preproc_dataset_1.csv")
+    # df_cleaned_2_all.to_csv(path_or_buf = "Saving_preproc_dataset_2.csv")
+
+    #====================================================================================================#
+    # Process Data 
 
 
+    BERTopic_mpnet_base(df_cleaned_n_all   = df_cleaned_1_all                  ,
+                        saved_fitted_model = "Saving_BERTopic_mpnet_base_1.p"  ,
+                       )
+    
 
+    BERTopic_mpnet_base(df_cleaned_n_all   = df_cleaned_2_all                  ,
+                        saved_fitted_model = "Saving_BERTopic_mpnet_base_2.p"  ,
+                       )
 
-
-
-
-
-
-
+    
+    BERTopic_roberta_base(df_cleaned_n_all   = df_cleaned_1_all                    ,
+                          saved_fitted_model = "Saving_BERTopic_roberta_base_1.p"  ,
+                          )
+    
+    BERTopic_roberta_base(df_cleaned_n_all   = df_cleaned_2_all                    ,
+                          saved_fitted_model = "Saving_BERTopic_roberta_base_2.p"  ,
+                          )
 
 
 
