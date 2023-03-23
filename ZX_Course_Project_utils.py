@@ -248,13 +248,13 @@ def Load_spacy():
 
 #--------------------------------------------------#
 # Define a function for identifying language (whether English).
-def is_English(text_str):
+def is_English(text_str, nlp):
     doc = nlp(text_str)
     detect_language = doc._.language["language"] 
     score           = doc._.language["score"]
     return (detect_language == "en"), detect_language, score
 
-def is_English_batch_process(text_list):
+def is_English_batch_process(text_list, nlp):
     ifEnglish_list = []
     dtct_lang_list = []
     score_list = []
