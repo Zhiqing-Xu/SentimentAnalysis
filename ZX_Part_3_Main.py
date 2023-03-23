@@ -62,11 +62,14 @@ import urllib
 import xml.etree.ElementTree as ET
 from urllib.request import urlopen
 #--------------------------------------------------#
-
+# Vader
+import nltk
+nltk.downloader.download('vader_lexicon')
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 #--------------------------------------------------#
 from sklearn.model_selection import train_test_split
-
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
 #--------------------------------------------------#
 # Pretrained Models.
 # Topic Models
@@ -74,10 +77,23 @@ from bertopic import BERTopic
 from flair.embeddings import TransformerDocumentEmbeddings
 
 # Language Models.
-from transformers import RobertaForSequenceClassification, RobertaTokenizerFast, Trainer, TrainingArguments
 
+import transformers
 
+from transformers import Trainer
+from transformers import TrainingArguments
 
+from transformers import AutoTokenizer
+from transformers import AutoModelForSequenceClassification
+
+from transformers import RobertaTokenizerFast
+from transformers import RobertaForSequenceClassification
+
+from transformers import AdamW
+from transformers import get_linear_schedule_with_warmup
+
+from transformers import DistilBertTokenizer
+from transformers import DistilBertForSequenceClassification
 
 
 #--------------------------------------------------#
@@ -237,6 +253,145 @@ def Clean_data(df_raw_n, num_words_lb): # num_words_lb is the minimum number of 
 
 
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$#
+#                     .M"""bgd `7MM"""YMM  `7MN.   `7MF'MMP""MM""YMM `7MMF'`7MMM.     ,MMF'`7MM"""YMM  `7MN.   `7MF'MMP""MM""YMM                       #
+#                    ,MI    "Y   MM    `7    MMN.    M  P'   MM   `7   MM    MMMb    dPMM    MM    `7    MMN.    M  P'   MM   `7                       #
+#                    `MMb.       MM   d      M YMb   M       MM        MM    M YM   ,M MM    MM   d      M YMb   M       MM                            #
+#                      `YMMNq.   MMmmMM      M  `MN. M       MM        MM    M  Mb  M' MM    MMmmMM      M  `MN. M       MM                            #
+#                    .     `MM   MM   Y  ,   M   `MM.M       MM        MM    M  YM.P'  MM    MM   Y  ,   M   `MM.M       MM                            #
+#                    Mb     dM   MM     ,M   M     YMM       MM        MM    M  `YM'   MM    MM     ,M   M     YMM       MM                            #
+#                    P"Ybmmd"  .JMMmmmmMMM .JML.    YM     .JMML.    .JMML..JML. `'  .JMML..JMMmmmmMMM .JML.    YM     .JMML.                          #
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$#
+
+# Sentiment Label Prediction via Pretrained Distilled BERT and Vader.
+
+#====================================================================================================#
+# Sentiment Label Prediction via Pretrained Distilled BERT
+
+
+
+def Get_DistillBERT_sentiment_labels(text_list, batch_size = 30):
+
+    DistillBERTmodel     = AutoModelForSequenceClassification.from_pretrained("Souvikcmsa/SentimentAnalysisDistillBERT", )
+    DistillBERTtokenizer = AutoTokenizer.from_pretrained("Souvikcmsa/SentimentAnalysisDistillBERT", )
+    DistillBERTmodel.cuda()
+
+    labels_list = []
+    scores_list = []
+    len_text_list = len(text_list)
+
+    print("Start Predicting with DistillBERTmodel ...")
+    for i in range(0, len_text_list, batch_size):
+        
+        last_slice      =   True if i + batch_size >= len_text_list else False
+        text_sublist    =   text_list[i : i + batch_size] if not last_slice else text_list[i : ]
+        inputs          =   DistillBERTtokenizer(text_sublist, return_tensors = "pt", padding = True, truncation = True)
+
+        input_ids       =  inputs["input_ids"].cuda()
+        attention_mask  =  inputs["attention_mask"].cuda()
+
+        outputs      =   DistillBERTmodel(input_ids, attention_mask)
+        _, y_tags    =   torch.max(outputs["logits"], dim = 1)
+        logits       =   outputs["logits"].cpu().detach().numpy()
+
+        labels_list.append(y_tags.cpu().detach().numpy())
+        scores_list.append(logits)
+    labels_list  = np.concatenate(labels_list)
+    scores_list  = np.concatenate(scores_list)
+    return labels_list, scores_list
+
+
+
+#====================================================================================================#
+# Sentiment Label Prediction via Pretrained Vader.
+
+# from typing import Optional, Union, Tuple, Type, Sequence, List, Set, Any, TextIO, IO
+def Vader_Prediction( text_array, threshold = 0.05, model = SentimentIntensityAnalyzer() ):
+    """
+    Inputs - threshold:
+        - Typical threshold values (used in the literature cited on this page) are:
+            * positive sentiment: (compound score >= +0.05)
+            * neutral  sentiment: (compound score >  -0.05) and (compound score <  +0.05)
+            * negative sentiment: (compound score <= -0.05)
+        - Using a standardized threshold for compound score is kept as an option.
+    Inputs - model: 
+        - no other options. 
+    
+    Outputs: 
+        - list of labels. 
+    
+    See more details here https://github.com/cjhutto/vaderSentiment#About-the-Scoring.
+    """
+
+    print("Start Predicting with Vader_Prediction ...")
+    sentiment_label_list = []
+    for idx, text_x in enumerate(text_array): # Seems that Vader has no batch processig (in parallel) options.
+        
+        cmpd_score = model.polarity_scores(text_x)['compound']
+        if   cmpd_score >=  threshold:
+            sentiment_label_list.append("pos")
+        elif cmpd_score < -threshold:
+            sentiment_label_list.append("neg")
+        else:
+            sentiment_label_list.append("neu")
+    return sentiment_label_list
+
+
+#====================================================================================================#
+# Sentiment Label Prediction Savings.
+def Get_Sentiment_Label_Prediction(df_cleaned_n_all   = None                              ,
+                                   saving_file        = "Saving_Sentiment_Label_Pred_.p"  ,
+                                   saving_folder      = Path("./")                        ,
+                                   force_DistilBERT   = False                             ,
+                                   force_Vader        = False                             ,
+                                   Vader_threshold    = 0.05                              ,
+                                   ):
+
+    if os.path.exists(saving_folder / saving_file):
+        df_cleaned_n_analysis = pd.read_pickle(saving_folder / saving_file)
+
+        if force_DistilBERT:
+            dataset_n_text = df_cleaned_n_all["cleaned_text"].values.tolist()
+            df_cleaned_n_analysis["DistilBertLabel"] = Get_DistillBERT_sentiment_labels(dataset_n_text)[0]
+
+        if force_Vader:
+            df_cleaned_n_analysis["Vader_sentiment"] = \
+                Vader_Prediction(df_cleaned_n_analysis["cleaned_text"].values.tolist() , 
+                                 threshold = 0.0                                       )
+            
+            df_cleaned_n_analysis["Vader_sentiment_neu"] = \
+                Vader_Prediction(df_cleaned_n_analysis["cleaned_text"].values.tolist() , 
+                                 threshold = Vader_threshold                           )
+
+        label_list = df_cleaned_n_analysis["DistilBertLabel"].values.tolist()
+        df_cleaned_n_analysis["DistilBert_sentiment"] = ["neg" if l==0 else "neu" if l==1 else "pos" for l in label_list]
+
+        df_cleaned_n_analysis.to_pickle(saving_folder / saving_file)
+
+    else:
+        # Make a copy.
+        df_cleaned_n_analysis = copy.deepcopy(df_cleaned_n_all)
+
+        #====================================================================================================#
+        # DistilBert Sentiment Labels. 
+        dataset_n_text = df_cleaned_n_all["cleaned_text"].values.tolist()
+        df_cleaned_n_analysis["DistilBertLabel"] = Get_DistillBERT_sentiment_labels(dataset_n_text)[0]
+        label_list = df_cleaned_n_analysis["DistilBertLabel"].values.tolist()
+        df_cleaned_n_analysis["DistilBert_sentiment"] = ["neg" if l==0 else "neu" if l==1 else "pos" for l in label_list]
+        #====================================================================================================#
+        # Vader Sentiment Labels. 
+        # Use Vader to predict sentiment labels for this dataset. 
+        df_cleaned_n_analysis["Vader_sentiment"] = Vader_Prediction(df_cleaned_n_analysis["cleaned_text"].values.tolist(), threshold = 0.00)
+        # Use Vader to predict sentiment labels for this dataset. 
+        df_cleaned_n_analysis["Vader_sentiment_neu"] = Vader_Prediction(df_cleaned_n_analysis["cleaned_text"].values.tolist(), threshold = Vader_threshold)
+        # Save.
+        df_cleaned_n_analysis.to_pickle(saving_folder / saving_file)
+    return df_cleaned_n_analysis
+
+
+
+
+
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$#
 #      MMP""MM""YMM   .g8""8q. `7MM"""Mq.`7MMF' .g8"""bgd          db     `7MN.   `7MF'     db     `7MMF'   `YMM'   `MM'.M"""bgd `7MMF' .M"""bgd       #
 #      P'   MM   `7 .dP'    `YM. MM   `MM. MM .dP'     `M         ;MM:      MMN.    M      ;MM:      MM       VMA   ,V ,MI    "Y   MM  ,MI    "Y       #
 #           MM      dM'      `MM MM   ,M9  MM dM'       `        ,V^MM.     M YMb   M     ,V^MM.     MM        VMA ,V  `MMb.       MM  `MMb.           #
@@ -258,11 +413,10 @@ def Clean_data(df_raw_n, num_words_lb): # num_words_lb is the minimum number of 
 
 #====================================================================================================#
 # BERTopic - "all-mpnet-base-v2"
-def BERTopic_mpnet_base(
-                        df_cleaned_n_all   = None                             ,
-                        saved_fitted_model = "Saving_BERTopic_mpnet_base_.p"  ,
-                        saving_folder      = Path("./Saving_Model")           ,
-                       ):
+def Get_BERTopic_mpnet_base(df_cleaned_n_all   = None                             ,
+                            saved_fitted_model = "Saving_BERTopic_mpnet_base_.p"  ,
+                            saving_folder      = Path("./Saving_Model")           ,
+                            ):
 
     # Load text data into a list.
     dateset_n_text_list = df_cleaned_n_all["cleaned_text"].values.tolist()
@@ -273,20 +427,15 @@ def BERTopic_mpnet_base(
         # Tune the pretrained model.
         topic_model = BERTopic(embedding_model="all-mpnet-base-v2").fit(dateset_n_text_list)
         pickle.dump(topic_model, open(saving_folder / saved_fitted_model, 'wb'))
-        pass
-
-    print(topic_model.get_topic_info().head(10))
-
-    return
-
+        
+    return topic_model
 
 #====================================================================================================#
-# BERTopic - "all-mpnet-base-v2"
-def BERTopic_roberta_base(
-                          df_cleaned_n_all   = None                               ,
-                          saved_fitted_model = "Saving_BERTopic_roberta_base_.p"  ,
-                          saving_folder      = Path("./Saving_Model")             ,
-                         ):
+# BERTopic - "all-roberta-base-v2"
+def Get_BERTopic_roberta_base(df_cleaned_n_all   = None                               ,
+                              saved_fitted_model = "Saving_BERTopic_roberta_base_.p"  ,
+                              saving_folder      = Path("./Saving_Model")             ,
+                              ):
 
     # Load text data into a list.
     dateset_n_text_list = df_cleaned_n_all["cleaned_text"].values.tolist()
@@ -298,11 +447,16 @@ def BERTopic_roberta_base(
         roberta = TransformerDocumentEmbeddings('roberta-base')
         topic_model = BERTopic(embedding_model = roberta).fit(dateset_n_text_list)
         pickle.dump(topic_model, open(saving_folder / saved_fitted_model, 'wb'))
-        pass
+        
 
-    print(topic_model.get_topic_info().head(10))
+    return topic_model
 
-    return
+#====================================================================================================#
+# 
+
+
+
+
 
 
 
@@ -360,35 +514,185 @@ if __name__ == "__main__":
     # df_cleaned_2_all.to_csv(path_or_buf = "Saving_preproc_dataset_2.csv")
 
     #====================================================================================================#
-    # Process Data 
+    # Topic Analysis.
 
+    # Dataset #1
+    BERTopic_mpnet_base_1 = \
+        Get_BERTopic_mpnet_base(df_cleaned_n_all   = df_cleaned_1_all                  ,
+                                saved_fitted_model = "Saving_BERTopic_mpnet_base_1.p"  ,
+                                )
+    
+    # Dataset #2
 
-    BERTopic_mpnet_base(df_cleaned_n_all   = df_cleaned_1_all                  ,
-                        saved_fitted_model = "Saving_BERTopic_mpnet_base_1.p"  ,
-                       )
+    BERTopic_mpnet_base_2 = \
+        Get_BERTopic_mpnet_base(df_cleaned_n_all   = df_cleaned_2_all                  ,
+                                saved_fitted_model = "Saving_BERTopic_mpnet_base_2.p"  ,
+                                )
+
     
 
-    BERTopic_mpnet_base(df_cleaned_n_all   = df_cleaned_2_all                  ,
-                        saved_fitted_model = "Saving_BERTopic_mpnet_base_2.p"  ,
-                       )
 
+    #====================================================================================================#
+    # Roberta_base models are found to be outperformed by mpnet_based models.
+
+    '''
+    BERTopic_roberta_base_1 = \
+        Get_BERTopic_roberta_base(df_cleaned_n_all   = df_cleaned_1_all                    ,
+                                  saved_fitted_model = "Saving_BERTopic_roberta_base_1.p"  ,
+                                  )
     
-    BERTopic_roberta_base(df_cleaned_n_all   = df_cleaned_1_all                    ,
-                          saved_fitted_model = "Saving_BERTopic_roberta_base_1.p"  ,
-                          )
-    
-    BERTopic_roberta_base(df_cleaned_n_all   = df_cleaned_2_all                    ,
-                          saved_fitted_model = "Saving_BERTopic_roberta_base_2.p"  ,
-                          )
+
+    BERTopic_roberta_base_2 = \
+    Get_BERTopic_roberta_base(df_cleaned_n_all   = df_cleaned_2_all                    ,
+                              saved_fitted_model = "Saving_BERTopic_roberta_base_2.p"  ,
+                              )
+                              '''
+
+
+
+
+    #====================================================================================================#
+    # Get Sentiment Labels.
+    df_cleaned_1_analysis = \
+        Get_Sentiment_Label_Prediction(df_cleaned_n_all   = df_cleaned_1_all                   ,
+                                       saving_file        = "Saving_Sentiment_Label_Pred_1.p"  ,
+                                       saving_folder      = Path("./")                         ,
+                                       force_DistilBERT   = False                              ,
+                                       force_Vader        = False                              ,
+                                       Vader_threshold    = 0.025                              ,
+                                       )
+
+    df_cleaned_2_analysis = \
+        Get_Sentiment_Label_Prediction(df_cleaned_n_all   = df_cleaned_2_all                   ,
+                                       saving_file        = "Saving_Sentiment_Label_Pred_2.p"  ,
+                                       saving_folder      = Path("./")                         ,
+                                       force_DistilBERT   = False                              ,
+                                       force_Vader        = False                              ,
+                                       Vader_threshold    = 0.025                              ,
+                                       )
+    # print(df_cleaned_1_analysis)
+    # print(df_cleaned_2_analysis)
+
+
+
+
+    #====================================================================================================#
+    # Percentage HeatMap
+    # Compare the two predictions.
+    num_classes = 3
+    output_file_header = "Part2"
+    plot_name = "Vader Prediction vs. DistilBERT Prediction"
+    results_sub_folder = Path("./")
+    DBERT_sentiments_1   = df_cleaned_1_analysis["DistilBert_sentiment"] .values.tolist()
+    Vader_sentiments_1   = df_cleaned_1_analysis["Vader_sentiment_neu"]  .values.tolist()
+
+    # print(DBERT_sentiments_1)
+    # print(Vader_sentiments_1)
+
+    font = {'family' : "Times New Roman"}
+    plt.rc('font', **font)
+    #--------------------------------------------------#
+    cm = confusion_matrix(Vader_sentiments_1, DBERT_sentiments_1)
+    cm = cm/len(Vader_sentiments_1) 
+    confusion_matrix_df = pd.DataFrame(cm) #.rename(columns=idx2class, index=idx2class)
+    #--------------------------------------------------#
+    fig = plt.figure(num=None, figsize=(16, 12.8), dpi=80, facecolor='w', edgecolor='k')
+    ax = sns.heatmap(confusion_matrix_df, 
+                        annot      = True             , 
+                        fmt        = ".3f"            , 
+                        cmap       = "magma"          , 
+                        vmin       = 0.15             , 
+                        vmax       = 0.30             , 
+                        center     = 0.22             , 
+                        cbar_kws   = {"shrink": .82}  , 
+                        linewidths = 0.1              , 
+                        linecolor  = 'gray'           , 
+                        annot_kws  = {"fontsize": 30} , 
+                        )
+
+    ax.set_xlabel('DistilBERT Predicted Class', fontsize = 32)
+    ax.set_ylabel('Vader Predicted Class', fontsize = 32)
+    ax.set_title("Confusion Matrix - " \
+                + " \n (Vader Prediction vs. DistilBERT Prediction)", fontsize = 32)
+    ax.xaxis.set_ticklabels([["Negative", "Neutral", "Positive"][i] for i in range(num_classes)], fontsize = 32) 
+    ax.yaxis.set_ticklabels([["Negative", "Neutral", "Positive"][i] for i in range(num_classes)], fontsize = 32) 
+    cbar = ax.collections[0].colorbar
+    cbar.ax.tick_params(labelsize=20)
+    plt.show()
+    #--------------------------------------------------#
+    saving_name = output_file_header + "_HeatMapCM_" + plot_name +"_percentage.png"
+    saving_name = saving_name 
+    fig.savefig(results_sub_folder / saving_name , dpi = 1000 )
+    mpl.rcParams.update(mpl.rcParamsDefault)
+
+
+
+
+
+    #====================================================================================================#
+    # BERTopic_mpnet_base on Dataset #1
+
+    # Manually select interested topics and perform analysis.
+    print(BERTopic_mpnet_base_1.get_topic_info().head(50))
+    print()
+
+    Dataset_1_topics_dict = { 0 : ["0_nuclear_nukes_nuke_launch"                  , "Nuke and Nuclear War"                ],  
+                              2 : ["2_ukraine_will_they_russia"                   , "Ukraine-Russia issues"               ],  
+                              3 : ["3_finland_sweden_nato_finnish"                , "Finland, Sweden and NATO"            ],  
+                              4 : ["4_orban_hungary_hungarian_hungarians"         , "Orban and Hungary"                   ],  
+                              6 : ["6_moldova_romania_transnistria_moldovan"      , "Moldova, Romania and Transnistria"   ],  
+                              7 : ["7_barrel_bore_center_lathe"                   , "Military Industry"                   ],  
+                              8 : ["8_surrender_casualties_civilians_civilian"    , "Surrender, Casualties and Civilians" ],  
+                              9 : ["9_germany_gas_german_bundeswehr"              , "Germany"                             ],  
+                             10 : ["10_threat_provoking_russia_threats"           , "Russia Provoking Threats"            ],  
+                             11 : ["11_zelensky_zelenskyy_munich_security"        , "Zelensky"                            ],  
+                             12 : ["12_putin_he_his_him"                          , "Putin"                               ],  
+                             13 : ["13_nato_russia_war_join"                      , "Nato and Russia Relation"            ],  
+                             14 : ["14_uk_eu_europe_france"                       , "UK, EU, Europe and France"           ],  
+                             16 : ["16_nato_members_alliance_defensive"           , "Nato Alliance Defense"               ],  
+                             17 : ["17_lie_lying_truth_media"                     , "Media Truth or Lie"                  ],  
+                             18 : ["18_trump_asset_his_putin"                     , "Trump and Putin"                     ],  
+                             19 : ["19_reactor_reactors_chernobyl_water"          , "Chernobyl Reactors"                  ],  
+                             20 : ["20_mercenaries_mercenary_conflict_armed"      , "Mercenary"                           ],  
+                             21 : ["21_baltic_baltics_lithuania_states"           , "Three Baltic Countries"              ],  
+                             22 : ["22_himars_missiles_range_system"              , "Firearms and Weapons"                ],  
+                             23 : ["23_ukraine_pray_my_peace"                     , "Pray Peace for Ukraine"              ],  
+                             24 : ["24_lose_war_putin_winning"                    , "Putin"                               ],  
+                             27 : ["27_belarus_continent_forget_center"           , "Belarus"                             ],  
+                             29 : ["29_economy_economical_economics_shortages"    , "Economy"                             ],  
+                             30 : ["30_bully_you_violence_fight"                  , "Violence"                            ],  
+                             34 : ["34_explosion_shot_tank_explosions"            , "Firearms and Weapons"                ],  
+                             36 : ["36_china_taiwan_hong_kong"                    , "China Taiwan Issue"                  ],  
+                             37 : ["37_nato_ukraine_troops_border"                , "Nato and Ukraine Troops"             ],  
+                             39 : ["39_biden_trump_republicans_he"                , "American Politicians"                ],  
+                             41 : ["41_he_putin_ukraine_him"                      , "Putin"                               ],  
+                             42 : ["42_language_russian_ukrainian_speak"          , "Ukraine-Russia issues"               ],  
+                             43 : ["43_minsk_ukraine_russian_russians"            , "Belarus"                             ],  
+                             44 : ["44_republican_republicans_poorly_party"       , "Republican"                          ],  
+                             45 : ["45_phosphorus_incendiary_smoke_banned"        , "Firearms and Weapons"                ],  
+                             47 : ["47_switchblade_artillery_armor_fire"          , "Firearms and Weapons"                ],  
+                             }
+
+    # BERTopic_mpnet_base_1.get_topic(0) # Get Keywords in Topic #0
+
+
+    print(BERTopic_mpnet_base_1.topics_[:10]) # Topic ID for the first 10 sentences in the document.
+    print()
+
+    #topic_model.visualize_hierarchy(top_n_topics=50)
 
 
 
 
 
 
+    print(BERTopic_mpnet_base_1.get_document_info(BERTopic_mpnet_base_1))
 
 
 
+    Dataset_1_keyword_list = ["Nuke", "Ukraine", "Russia", "Hungary", "Germany", "Nato", "Putin", "Zelensky", "Biden", "Trump", "Firearms"]
+    similar_topics, similarity = BERTopic_mpnet_base_1.find_topics("vehicle", top_n = 5)
+    print(similar_topics)
 
 
 
