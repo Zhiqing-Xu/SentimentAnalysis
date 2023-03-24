@@ -103,13 +103,13 @@ from transformers import RobertaForSequenceClassification, RobertaTokenizerFast,
 # For clearly print a dataframe. 
 def beautiful_print(df): # Print the DataFrame obtained (May NOT work properly in jupyter notebook).
     # Print the dataset in a well-organized format.
-    with pd.option_context('display.max_rows'       , 10   , 
-                           'display.min_rows'       , 10   , 
-                           'display.max_columns'    , 15   , 
-                           "display.max_colwidth"   , 120 ,
-                           "display.width"          , None ,
-                           "expand_frame_repr"      , True ,
-                           "max_seq_items"          , None , ):  # more options can be specified
+    with pd.option_context('display.max_rows'       ,  10    , 
+                           'display.min_rows'       ,  10    , 
+                           'display.max_columns'    ,  5     , 
+                           "display.max_colwidth"   ,  50    ,
+                           "display.width"          ,  None  ,
+                           "expand_frame_repr"      ,  True  ,
+                           "max_seq_items"          ,  None  ,  ):  # more options can be specified
         # Once the display.max_rows is exceeded, 
         # the display.min_rows options determines 
         # how many rows are shown in the truncated repr.
