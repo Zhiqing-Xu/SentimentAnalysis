@@ -451,6 +451,7 @@ def Get_Sentiment_Label_Prediction(df_cleaned_n_all      = None                 
             df_cleaned_n_analysis["Vader_sentiment"] = \
                 Vader_Prediction(df_cleaned_n_analysis["cleaned_text"].values.tolist() , 
                                  threshold = 0.0                                       )
+            
             df_cleaned_n_analysis["Vader_sentiment_neu"] = \
                 Vader_Prediction(df_cleaned_n_analysis["cleaned_text"].values.tolist() , 
                                  threshold = Vader_threshold                           )
@@ -483,7 +484,7 @@ def Get_Sentiment_Label_Prediction(df_cleaned_n_all      = None                 
         df_cleaned_n_analysis = copy.deepcopy(df_cleaned_n_all)
 
         #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
-        # DistilBert Sentiment Labels. 
+        # DistilBert Sentiment Labels. (Trained by others.)
         dataset_n_text = df_cleaned_n_all["cleaned_text"].values.tolist()
         df_cleaned_n_analysis["DistilBertLabel"] = Get_DistillBERT_sentiment_labels(dataset_n_text)[0]
         label_list = df_cleaned_n_analysis["DistilBertLabel"].values.tolist()
@@ -505,9 +506,13 @@ def Get_Sentiment_Label_Prediction(df_cleaned_n_all      = None                 
         dataset_n_text = df_cleaned_n_all["cleaned_text"].values.tolist()
         df_cleaned_n_analysis["DistilBertLabel_TR"] = Get_DistillBERT_TR_sentiment_labels(dataset_n_text)[0]
         label_list = df_cleaned_n_analysis["DistilBertLabel_TR"].values.tolist()
-        df_cleaned_n_analysis["DistilBert_sentiment_TR"] = ["neg" if l==0 else "pos" for l in label_list]       
-        
+        df_cleaned_n_analysis["DistilBert_sentiment_TR"] = ["neg" if l==0 else "pos" for l in label_list]   
+
+        #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+        # DistilBert Sentiment TR Labels. (Trained in this project.)  
         # Save.
+
+
         df_cleaned_n_analysis.to_pickle(saving_folder / saving_file)
 
     return df_cleaned_n_analysis
