@@ -97,7 +97,7 @@ from transformers import DistilBertForSequenceClassification
 
 from typing import Optional, Union, Tuple, Type, Sequence, List, Set, Any, TextIO, IO
 #--------------------------------------------------#
-from ZX_Course_Project_utils import *
+from Part_3_utils import *
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -485,7 +485,7 @@ def Get_11_Sentiment_labels(text_list, batch_size = 30, Saved_Model_folder = Pat
     all_labels_dict = dict([])
     for idx, sentiment_x in enumerate(all_sentiment):
 
-        PRE_TRAINED_MODEL_NAME = 'distilbert-base-uncased'
+        PRE_TRAINED_MODEL_NAME        = 'distilbert-base-uncased'
         DistillBERTmodel_TR           = DistilBertForSequenceClassification.from_pretrained(PRE_TRAINED_MODEL_NAME, num_labels = 2)
         DistillBERTmodel_TR_tokenizer = DistilBertTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)
 
@@ -521,6 +521,14 @@ def Get_11_Sentiment_labels(text_list, batch_size = 30, Saved_Model_folder = Pat
     return all_labels_dict
 
 
+def test_Get_11_Sentiment_labels():
+    print("Emotions for the following two sentences: " )
+    print("I love AutoTrain. " )
+    print("I am happy that you called me, but I don't like the way you talk. ")
+    print(Get_11_Sentiment_labels(["I love AutoTrain", "I am happy that you called me, but I don't like the way you talk. " ]))
+
+
+
 ###################################################################################################################
 #    .g8"""bgd `7MM"""YMM MMP""MM""YMM    `7MMF'            db     `7MM"""Yp, `7MM"""YMM  `7MMF'       .M"""bgd   #
 #  .dP'     `M   MM    `7 P'   MM   `7      MM             ;MM:      MM    Yb   MM    `7    MM        ,MI    "Y   #
@@ -531,14 +539,14 @@ def Get_11_Sentiment_labels(text_list, batch_size = 30, Saved_Model_folder = Pat
 #    `"bmmmdPY .JMMmmmmMMM   .JMML.       .JMMmmmmMMM .AMA.   .AMMA.JMMmmmd9  .JMMmmmmMMM .JMMmmmmMMM P"Ybmmd"    #
 ###################################################################################################################
 # Sentiment Label Prediction Savings.
-def Get_Sentiment_Label_Prediction(df_cleaned_n_all      = None                              ,
+def Get_Sentiment_Label_Prediction(df_cleaned_n_all      = None                                     ,
                                    saving_file           = "Saving_Part_3_Sentiment_Label_Pred_.p"  ,
-                                   saving_folder         = Path("./")                        ,
-                                   force_DistilBERT      = False                             ,
-                                   force_DistilBERT_TR   = False                             ,
-                                   force_Vader           = False                             ,
-                                   force_11_Sentiment    = False                             ,
-                                   Vader_threshold       = 0.05                              ,
+                                   saving_folder         = Path("./")                               ,
+                                   force_DistilBERT      = False                                    ,
+                                   force_DistilBERT_TR   = False                                    ,
+                                   force_Vader           = False                                    ,
+                                   force_11_Sentiment    = False                                    ,
+                                   Vader_threshold       = 0.05                                     ,
                                    ):
 
     if os.path.exists(saving_folder / saving_file):
@@ -748,9 +756,9 @@ def Comparing_predicted_labels(dataframe_analysis = None                    ,
 
 #====================================================================================================#
 # BERTopic - "all-mpnet-base-v2"
-def Get_BERTopic_mpnet_base(df_cleaned_n_all   = None                             ,
-                            saved_fitted_model = "Saving_Part_3_BERTopic_mpnet_base_.p"  ,
-                            saving_folder      = Path("./Saving_Model")           ,
+def Get_BERTopic_mpnet_base(df_cleaned_n_all   = None                                    ,
+                            saved_fitted_model = "Saving_BERTopic_mpnet_base_.p"         ,
+                            saving_folder      = Path("./Saving_Model")                  ,
                             ):
 
     # Load text data into a list.
@@ -761,16 +769,17 @@ def Get_BERTopic_mpnet_base(df_cleaned_n_all   = None                           
     else:
         # Tune the pretrained model.
         topic_model = BERTopic(embedding_model="all-mpnet-base-v2").fit(dateset_n_text_list)
+
         pickle.dump(topic_model, open(saving_folder / saved_fitted_model, 'wb'))
         
     return topic_model
 
 
 #====================================================================================================#
-# BERTopic - "all-roberta-base-v2"
-def Get_BERTopic_roberta_base(df_cleaned_n_all   = None                               ,
-                              saved_fitted_model = "Saving_Part_3_BERTopic_roberta_base_.p"  ,
-                              saving_folder      = Path("./Saving_Model")             ,
+# BERTopic - "all-roberta-base-v2"   # Poor Performance !!
+def Get_BERTopic_roberta_base(df_cleaned_n_all   = None                                      ,
+                              saved_fitted_model = "Saving_BERTopic_roberta_base_.p"         ,
+                              saving_folder      = Path("./Saving_Model")                    ,
                               ):
 
     # Load text data into a list.
@@ -786,16 +795,75 @@ def Get_BERTopic_roberta_base(df_cleaned_n_all   = None                         
         
     return topic_model
 
+#====================================================================================================#
+# BERTopic - Advanced Customization.
+def Get_BERTopic_custiomized(df_cleaned_n_all   = None                                     ,
+                             saved_fitted_model = "Saving_BERTopic_custiomized_.p"         ,
+                             saving_folder      = Path("./Saving_Model")                   ,
+                             ):
+
+    # Load text data into a list.
+    dateset_n_text_list = df_cleaned_n_all["cleaned_text"].values.tolist()
+
+    if os.path.exists(saving_folder / saved_fitted_model):
+        topic_model = pickle.load(open(saving_folder / saved_fitted_model, 'rb'))
+    else:
+        from umap import UMAP
+        umap_model = UMAP(n_neighbors = 15, n_components = 10, min_dist = 0.0, metric = 'cosine')
+
+        # Tune the pretrained model.
+        topic_model = BERTopic(language                = "english"            ,
+                               embedding_model         = "all-mpnet-base-v2"  ,
+                               calculate_probabilities = True                 , 
+                               verbose                 = True                 ,
+                               n_gram_range            = (1, 2)               ,
+                               #umap_model              = umap_model           ,
+                               
+                               ).fit(dateset_n_text_list)
+        
+        pickle.dump(topic_model, open(saving_folder / saved_fitted_model, 'wb'))
+        
+    return topic_model
+
+
+#====================================================================================================#
+# BERTopic - Original Settings.
+def Get_BERTopic_original(df_cleaned_n_all   = None                                  ,
+                          saved_fitted_model = "Saving_BERTopic_original_.p"         ,
+                          saving_folder      = Path("./Saving_Model")                ,
+                          ):
+
+    # Load text data into a list.
+    dateset_n_text_list = df_cleaned_n_all["cleaned_text"].values.tolist()
+
+    if os.path.exists(saving_folder / saved_fitted_model):
+        topic_model = pickle.load(open(saving_folder / saved_fitted_model, 'rb'))
+    else:
+        from umap import UMAP
+        umap_model = UMAP(n_neighbors = 15, n_components = 10, min_dist = 0.0, metric = 'cosine')
+        topic_model = BERTopic(language                  = "english"     , 
+                               calculate_probabilities   = True          , 
+                               verbose                   = True          ,
+                               n_gram_range              = (1, 2)        ,
+                               umap_model                = umap_model    ,
+                               ).fit(dateset_n_text_list)
+        
+        pickle.dump(topic_model, open(saving_folder / saved_fitted_model, 'wb'))
+        
+    return topic_model
+
+
 
 #====================================================================================================#
 # Add BERTopic to Cleaned Dataframe.
-def Add_BERTopic_to_Dataframe(df_cleaned_n_analysis = None,
-                              topic_model           = None,
-                              saving_folder         = None,
-                              saving_file           = None,
+def Add_BERTopic_to_Dataframe(df_cleaned_n_analysis = None  ,
+                              topic_model           = None  ,
+                              saving_folder         = None  ,
+                              saving_file           = None  ,
+                              force_redo            = False ,
                               ):
 
-    if os.path.exists(saving_folder / saving_file):
+    if os.path.exists(saving_folder / saving_file) and not force_redo:
         df_n_analysis = pd.read_pickle(saving_folder / saving_file)
 
     else:
@@ -838,8 +906,7 @@ def Add_BERTopic_to_Dataframe(df_cleaned_n_analysis = None,
 #   .JML. `'  .JMML..AMA.   .AMMA..JMML..JML.    YM                   V             V             V                                                    #
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$#
 # 
-
-def main():
+def Part_3_Main():
 
     #====================================================================================================#
     # Args
@@ -859,6 +926,7 @@ def main():
         df_cleaned_1_all = Clean_data(df_raw_1, num_words_lb = 2)
         df_cleaned_1_all.to_pickle(saved_preproc_dataset_1)
 
+
     if os.path.exists(saved_preproc_dataset_2) and not reprocess_dataset: 
         df_cleaned_2_all = pd.read_pickle(saved_preproc_dataset_2)
         print("\n\n" + "=" * 125 + "\nCleaned Part 2 Dataset #2 : ")
@@ -871,37 +939,6 @@ def main():
     # df_cleaned_1_all.to_csv(path_or_buf = "Saving_Part_3_preproc_dataset_1.csv")
     # df_cleaned_2_all.to_csv(path_or_buf = "Saving_Part_3_preproc_dataset_2.csv")
 
-    #====================================================================================================#
-    # Topic Analysis - Apply the BERTopic Model to dateset.
-
-    # Dataset #1
-    BERTopic_mpnet_base_1 = \
-        Get_BERTopic_mpnet_base(df_cleaned_n_all   = df_cleaned_1_all                         ,
-                                saved_fitted_model = "Saving_Part_3_BERTopic_mpnet_base_1.p"  ,
-                                )
-    
-    # Dataset #2
-    BERTopic_mpnet_base_2 = \
-        Get_BERTopic_mpnet_base(df_cleaned_n_all   = df_cleaned_2_all                         ,
-                                saved_fitted_model = "Saving_Part_3_BERTopic_mpnet_base_2.p"  ,
-                                )
-
-
-    #====================================================================================================#
-    # Roberta_base models are found to be outperformed by mpnet_based models.
-    '''
-    BERTopic_roberta_base_1 = \
-        Get_BERTopic_roberta_base(df_cleaned_n_all   = df_cleaned_1_all                          ,
-                                  saved_fitted_model = "Saving_Part_3_BERTopic_roberta_base_1.p" ,
-                                  )
-                                  '''
-
-    '''
-    BERTopic_roberta_base_2 = \
-        Get_BERTopic_roberta_base(df_cleaned_n_all   = df_cleaned_2_all                          ,
-                                saved_fitted_model   = "Saving_Part_3_BERTopic_roberta_base_2.p" ,
-                                )
-                              '''
 
 
 
@@ -924,12 +961,11 @@ def main():
                                        force_Vader        = False                                    ,
                                        Vader_threshold    = 0.42                                     ,
                                        )
-    
+
     # print(df_cleaned_1_analysis)
     # print(df_cleaned_2_analysis)
 
-
-    #====================================================================================================#
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
     # Comparing Predicted Labels.
     '''
     Comparing_predicted_labels(dataframe_analysis = df_cleaned_1_analysis   ,
@@ -940,7 +976,7 @@ def main():
                                dataset_index      = "_1"                    ,
                                )
                                '''
-    
+
     '''
     Comparing_predicted_labels(dataframe_analysis = df_cleaned_2_analysis   ,
                                column_1           = "DistilBert_sentiment"  ,
@@ -951,106 +987,105 @@ def main():
                                )
                                '''
 
+
+
+    #====================================================================================================#
+    # Topic Analysis - Apply the BERTopic Model to dateset.
+    # Dataset #1
+    BERTopic_mpnet_base_1 = \
+        Get_BERTopic_mpnet_base(df_cleaned_n_all   = df_cleaned_1_all                   ,
+                                saved_fitted_model = "Saving_BERTopic_mpnet_base_1.p"   ,
+                                )
+
+    # Dataset #2
+    BERTopic_mpnet_base_2 = \
+        Get_BERTopic_mpnet_base(df_cleaned_n_all   = df_cleaned_2_all                   ,
+                                saved_fitted_model = "Saving_BERTopic_mpnet_base_2.p"   ,
+                                )
+
+    # Dataset #1
+    BERTopic_customized_1 = \
+        Get_BERTopic_custiomized(df_cleaned_n_all   = df_cleaned_1_all                  ,
+                                 saved_fitted_model = "Saving_BERTopic_customized_1.p"  ,
+                                 )
+    
+    # Dataset #1
+    BERTopic_original_1 = \
+        Get_BERTopic_original(df_cleaned_n_all   = df_cleaned_1_all                     ,
+                              saved_fitted_model = "Saving_BERTopic_original_1.p"       ,
+                              )
+
+    print(BERTopic_original_1.get_topic_info().head(50))
+
+    
+    # Dataset #1
+    BERTopic_original_2 = \
+        Get_BERTopic_original(df_cleaned_n_all   = df_cleaned_2_all                       ,
+                              saved_fitted_model = "Saving_BERTopic_original_2_0.p"       ,
+                              )  
+    
+
+
+
+
+
+                              
+    #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
+    # Roberta_base models are found to be outperformed by mpnet_based models.
+    '''
+    BERTopic_roberta_base_1 = \
+        Get_BERTopic_roberta_base(df_cleaned_n_all   = df_cleaned_1_all                          ,
+                                  saved_fitted_model = "Saving_BERTopic_roberta_base_1.p" ,
+                                  )
+                                  '''
+    
+    '''
+    BERTopic_roberta_base_2 = \
+        Get_BERTopic_roberta_base(df_cleaned_n_all   = df_cleaned_2_all                          ,
+                                saved_fitted_model   = "Saving_BERTopic_roberta_base_2.p" ,
+                                )
+                              '''
+
+
     #====================================================================================================#
     # Add BERTopic to the cleaned dataframe. 
     df_1_analysis = \
-        Add_BERTopic_to_Dataframe(df_cleaned_n_analysis = df_cleaned_1_analysis           ,
-                                  topic_model           = BERTopic_mpnet_base_1           ,
-                                  saving_folder         = Path("./")                      ,
-                                  saving_file           = "Saving_Part_3_BERTopic_df_1.p" ,
+        Add_BERTopic_to_Dataframe(df_cleaned_n_analysis = df_cleaned_1_analysis                   ,
+                                  topic_model           = BERTopic_mpnet_base_1                   ,
+                                  saving_folder         = Path("./")                              ,
+                                  saving_file           = "Saving_Part_3_BERTopic_df_1.p"         ,
                                   )
 
     df_2_analysis = \
-        Add_BERTopic_to_Dataframe(df_cleaned_n_analysis = df_cleaned_2_analysis           ,
-                                  topic_model           = BERTopic_mpnet_base_2           ,
-                                  saving_folder         = Path("./")                      ,
-                                  saving_file           = "Saving_Part_3_BERTopic_df_2.p" ,
+        Add_BERTopic_to_Dataframe(df_cleaned_n_analysis = df_cleaned_2_analysis                   ,
+                                  topic_model           = BERTopic_mpnet_base_2                   ,
+                                  saving_folder         = Path("./")                              ,
+                                  saving_file           = "Saving_Part_3_BERTopic_df_2.p"         ,
                                   )
-
 
     print("\n\n" + "="*125 + "\nAdd BERTopic to the cleaned dataset #1: " )
     beautiful_print(df_1_analysis)
 
-
     print("\n\n" + "="*125 + "\nAdd BERTopic to the cleaned dataset #2: " )
     beautiful_print(df_2_analysis)
 
-
-    #====================================================================================================#
-    # BERTopic_mpnet_base on Dataset #1
-
-    # Manually select interested topics and perform analysis.
-    print(BERTopic_mpnet_base_1.get_topic_info().head(50))
-    print()
-
-    Dataset_1_topics_dict = { 0 : ["0_nuclear_nukes_nuke_launch"                  , "Nuke and Nuclear War"                ],  
-                              2 : ["2_ukraine_will_they_russia"                   , "Ukraine-Russia issues"               ],  
-                              3 : ["3_finland_sweden_nato_finnish"                , "Finland, Sweden and NATO"            ],  
-                              4 : ["4_orban_hungary_hungarian_hungarians"         , "Orban and Hungary"                   ],  
-                              6 : ["6_moldova_romania_transnistria_moldovan"      , "Moldova, Romania and Transnistria"   ],  
-                              7 : ["7_barrel_bore_center_lathe"                   , "Military Industry"                   ],  
-                              8 : ["8_surrender_casualties_civilians_civilian"    , "Surrender, Casualties and Civilians" ],  
-                              9 : ["9_germany_gas_german_bundeswehr"              , "Germany"                             ],  
-                             10 : ["10_threat_provoking_russia_threats"           , "Russia Provoking Threats"            ],  
-                             11 : ["11_zelensky_zelenskyy_munich_security"        , "Zelensky"                            ],  
-                             12 : ["12_putin_he_his_him"                          , "Putin"                               ],  
-                             13 : ["13_nato_russia_war_join"                      , "Nato and Russia Relation"            ],  
-                             14 : ["14_uk_eu_europe_france"                       , "UK, EU, Europe and France"           ],  
-                             16 : ["16_nato_members_alliance_defensive"           , "Nato Alliance Defense"               ],  
-                             17 : ["17_lie_lying_truth_media"                     , "Media Truth or Lie"                  ],  
-                             18 : ["18_trump_asset_his_putin"                     , "Trump and Putin"                     ],  
-                             19 : ["19_reactor_reactors_chernobyl_water"          , "Chernobyl Reactors"                  ],  
-                             20 : ["20_mercenaries_mercenary_conflict_armed"      , "Mercenary"                           ],  
-                             21 : ["21_baltic_baltics_lithuania_states"           , "Three Baltic Countries"              ],  
-                             22 : ["22_himars_missiles_range_system"              , "Firearms and Weapons"                ],  
-                             23 : ["23_ukraine_pray_my_peace"                     , "Pray Peace for Ukraine"              ],  
-                             24 : ["24_lose_war_putin_winning"                    , "Putin"                               ],  
-                             27 : ["27_belarus_continent_forget_center"           , "Belarus"                             ],  
-                             29 : ["29_economy_economical_economics_shortages"    , "Economy"                             ],  
-                             30 : ["30_bully_you_violence_fight"                  , "Violence"                            ],  
-                             34 : ["34_explosion_shot_tank_explosions"            , "Firearms and Weapons"                ],  
-                             36 : ["36_china_taiwan_hong_kong"                    , "China Taiwan Issue"                  ],  
-                             37 : ["37_nato_ukraine_troops_border"                , "Nato and Ukraine Troops"             ],  
-                             39 : ["39_biden_trump_republicans_he"                , "American Politicians"                ],  
-                             41 : ["41_he_putin_ukraine_him"                      , "Putin"                               ],  
-                             42 : ["42_language_russian_ukrainian_speak"          , "Ukraine-Russia issues"               ],  
-                             43 : ["43_minsk_ukraine_russian_russians"            , "Belarus"                             ],  
-                             44 : ["44_republican_republicans_poorly_party"       , "Republican"                          ],  
-                             45 : ["45_phosphorus_incendiary_smoke_banned"        , "Firearms and Weapons"                ],  
-                             47 : ["47_switchblade_artillery_armor_fire"          , "Firearms and Weapons"                ],  
-                             }
-
-    # BERTopic_mpnet_base_1.get_topic(0) # Get a list of keywords in Topic #0
+    
 
 
-    print(BERTopic_mpnet_base_1.topics_[:10]) # Topic ID for the first 10 sentences in the document.
-    print()
-
-    #topic_model.visualize_hierarchy(top_n_topics=50)
-
-
-
-    print(BERTopic_mpnet_base_1.get_document_info(BERTopic_mpnet_base_1))
-
-
-
-    Dataset_1_keyword_list = ["Nuke", "Ukraine", "Russia", "Hungary", "Germany", "Nato", "Putin", "Zelensky", "Biden", "Trump", "Firearms"]
-    similar_topics, similarity = BERTopic_mpnet_base_1.find_topics("Nuke", top_n = 5)
-    print(similar_topics)
 
     return 
 
 
 
-def test():
-    print(Get_11_Sentiment_labels(["I love AutoTrain", "I am happy that you called me, but I don't like the way you talk. " ]))
-
 
 
 
 if __name__ == "__main__":
-    main()
+    Part_3_Main()
     
+    #test_Get_11_Sentiment_labels()
+
+
 
 
 

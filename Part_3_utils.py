@@ -296,8 +296,111 @@ def is_English_batch_process(text_list, nlp):
 
 
 
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$#
+#    `7MM"""Mq.`7MM"""Mq. `7MM"""YMM  `7MM"""Mq.`7MM"""Mq.   .g8""8q.     .g8"""bgd `7MM"""YMM   .M"""bgd  .M"""bgd `7MMF'`7MN.   `7MF' .g8"""bgd      #
+#      MM   `MM. MM   `MM.  MM    `7    MM   `MM. MM   `MM..dP'    `YM. .dP'     `M   MM    `7  ,MI    "Y ,MI    "Y   MM    MMN.    M .dP'     `M      #
+#      MM   ,M9  MM   ,M9   MM   d      MM   ,M9  MM   ,M9 dM'      `MM dM'       `   MM   d    `MMb.     `MMb.       MM    M YMb   M dM'       `      #
+#      MMmmdM9   MMmmdM9    MMmmMM      MMmmdM9   MMmmdM9  MM        MM MM            MMmmMM      `YMMNq.   `YMMNq.   MM    M  `MN. M MM               #
+#      MM        MM  YM.    MM   Y  ,   MM        MM  YM.  MM.      ,MP MM.           MM   Y  , .     `MM .     `MM   MM    M   `MM.M MM.    `7MMF'    #
+#      MM        MM   `Mb.  MM     ,M   MM        MM   `Mb.`Mb.    ,dP' `Mb.     ,'   MM     ,M Mb     dM Mb     dM   MM    M     YMM `Mb.     MM      #
+#    .JMML.    .JMML. .JMM.JMMmmmmMMM .JMML.    .JMML. .JMM. `"bmmd"'     `"bmmmd'  .JMMmmmmMMM P"Ybmmd"  P"Ybmmd"  .JMML..JML.    YM   `"bmmmdPY      #
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$#
 
 
+def ZX_barplot(dataframe           =   None              ,
+               x                   =   "Encodings"       ,
+               y                   =   "Counts"          ,
+               #stat               =   "percent"         , # Temporarily Useless
+               #multiple           =   "dodge"           , # Temporarily Useless
+               palette             =   None              ,
+               #height             =   9                 , # Temporarily Useless
+               #aspect             =   4/3               , # Temporarily Useless
+               order               =   None              ,
+               x_title             =   None              ,
+               y_title             =   None              ,
+               p_title             =   None              ,
+               xticklabels         =   None              ,
+               output_folder       =   Path("./")        ,
+               output_file_header  =   "Unnamed"         ,
+               rotation            =   45
+              ):
+    
+    fig= plt.figure(figsize=(16, 9))
+    main_color = sns.color_palette("autumn", 6)
+
+
+    sns.set(style = "darkgrid")
+    ax = sns.barplot (data        =  dataframe    ,
+                      x           =  x            ,
+                      y           =  y            ,
+                      #stat       =  "percent"    ,
+                      #multiple   =  "dodge"      ,
+                      palette     =  palette      ,
+                      # height    =  9            ,
+                      # aspect    =  4/3          ,
+                      order       =  order        ,
+                      )
+
+    #--------------------------------------------------#
+    # legend = ax.get_legend()
+    # handles = legend.legendHandles
+
+    # ax.legend(loc            = 'upper right',
+    #           fontsize       = '16',)
+    #--------------------------------------------------#
+    ax.set_xticklabels(xticklabels)
+    #--------------------------------------------------#
+    font = {'family' : "Times New Roman"}
+    plt.rc('font', **font)
+    mpl.rc('font', family = 'serif', serif = "Times New Roman")
+    #--------------------------------------------------#
+    plt.rc('font', **font)
+    plt.rc('font', size = 20)             # controls default text sizes
+    plt.rc('axes', titlesize = 20)        # fontsize of the axes title
+    plt.rc('axes', labelsize = 20)        # fontsize of the x and y labels
+    #--------------------------------------------------#
+    plt.rc('xtick',  labelsize = 20, )    # fontsize of the tick labels
+    plt.rc('ytick',  labelsize = 20, )    # fontsize of the tick labels
+    plt.rc('legend', fontsize  = 20, )    # legend fontsize
+    plt.rc('figure', titlesize = 20, )    # fontsize of the figure title
+    #--------------------------------------------------#
+    plt.xticks(fontsize = 20, rotation = rotation, **font)
+    plt.yticks(fontsize = 20, **font)
+    #--------------------------------------------------#
+    x_title = x_title
+    y_title = y_title
+    p_title = p_title
+    #--------------------------------------------------#
+    plt.xlabel(x_title, fontsize = 30, **font)
+    plt.ylabel(y_title, fontsize = 30, **font)
+    plt.title (p_title, fontsize = 40, **font)
+    #--------------------------------------------------#
+    # plt.setp(ax.get_legend().get_texts(), fontsize='22', ) # for legend text
+    # plt.setp(ax.get_legend().get_title(), fontsize='32', ) # for legend title
+    #--------------------------------------------------#
+    plt.rc('font', **font)
+    mpl.rc('font', family = 'serif', serif = "Times New Roman")
+    #--------------------------------------------------#
+    folder = output_folder
+    fig.savefig(folder / (output_file_header + ".png") , dpi = 500 ) 
+    mpl.rcParams.update(mpl.rcParamsDefault)
+    plt.show()
+
+    return
+
+
+
+
+
+
+
+
+
+
+
+if __name__ == "__main__":
+    
+    pass
 
 
 
