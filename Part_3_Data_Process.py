@@ -639,6 +639,8 @@ def Get_Sentiment_Label_Prediction(df_cleaned_n_all      = None                 
 
 
 
+
+
 ###################################################################################################################
 #    .g8"""bgd   .g8""8q. `7MMM.     ,MMF'`7MM"""Mq.   db     `7MM"""Mq. `7MMF' .M"""bgd   .g8""8q. `7MN.   `7MF' #
 #  .dP'     `M .dP'    `YM. MMMb    dPMM    MM   `MM. ;MM:      MM   `MM.  MM  ,MI    "Y .dP'    `YM. MMN.    M   #
@@ -663,7 +665,7 @@ def Comparing_predicted_labels(dataframe_analysis = None                    ,
 
     output_file_header = "Part2"
     plot_name = f"{label_2} Prediction vs. {label_1} Prediction"
-    results_sub_folder = Path("./")
+    results_sub_folder = Path("Part2_Figures/")
     column_1_sentiments_1   = dataframe_analysis[column_1] .values.tolist()
     column_2_sentiments_1   = dataframe_analysis[column_2] .values.tolist()
 
@@ -940,8 +942,6 @@ def Part_3_Main():
     # df_cleaned_2_all.to_csv(path_or_buf = "Saving_Part_3_preproc_dataset_2.csv")
 
 
-
-
     #====================================================================================================#
     # Get Sentiment Labels - Implement four different models (trained already)
     df_cleaned_1_analysis = \
@@ -967,25 +967,25 @@ def Part_3_Main():
 
     #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
     # Comparing Predicted Labels.
-    '''
-    Comparing_predicted_labels(dataframe_analysis = df_cleaned_1_analysis   ,
-                               column_1           = "DistilBert_sentiment"  ,
-                               column_2           = "Vader_sentiment_neu"   ,
-                               label_1            = "DistilBert"            ,
-                               label_2            = "Vader"                 ,
-                               dataset_index      = "_1"                    ,
-                               )
-                               '''
 
-    '''
-    Comparing_predicted_labels(dataframe_analysis = df_cleaned_2_analysis   ,
-                               column_1           = "DistilBert_sentiment"  ,
-                               column_2           = "Vader_sentiment_neu"   ,
-                               label_1            = "DistilBert"            ,
-                               label_2            = "Vader"                 ,
-                               dataset_index      = "_2"                    ,
+    Comparing_predicted_labels(dataframe_analysis = df_cleaned_1_analysis      ,
+                               column_1           = "DistilBert_TR_sentiment"  ,
+                               column_2           = "Vader_sentiment"          ,
+                               label_1            = "DistilBert"               ,
+                               label_2            = "Vader"                    ,
+                               dataset_index      = "_1"                       ,
                                )
-                               '''
+                               
+
+    
+    Comparing_predicted_labels(dataframe_analysis = df_cleaned_2_analysis      ,
+                               column_1           = "DistilBert_TR_sentiment"  ,
+                               column_2           = "Vader_sentiment"          ,
+                               label_1            = "DistilBert"               ,
+                               label_2            = "Vader"                    ,
+                               dataset_index      = "_2"                       ,
+                               )
+                               
 
 
 
@@ -1016,17 +1016,6 @@ def Part_3_Main():
                               )
 
     print(BERTopic_original_1.get_topic_info().head(50))
-
-    
-    # Dataset #1
-    BERTopic_original_2 = \
-        Get_BERTopic_original(df_cleaned_n_all   = df_cleaned_2_all                       ,
-                              saved_fitted_model = "Saving_BERTopic_original_2_0.p"       ,
-                              )  
-    
-
-
-
 
 
                               
@@ -1068,9 +1057,6 @@ def Part_3_Main():
 
     print("\n\n" + "="*125 + "\nAdd BERTopic to the cleaned dataset #2: " )
     beautiful_print(df_2_analysis)
-
-    
-
 
 
     return 

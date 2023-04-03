@@ -1,0 +1,159 @@
+    0  &                    0\_nato\_russia\_would\_to  &   NATO and Russia                         \\
+    2  &                     2\_putin\_he\_his\_putins  &   Putin                                   \\
+    3  &                     3\_uk\_france\_europe\_eu  &   UK, EU, Europe and France               \\
+    4  &             4\_finland\_sweden\_nato\_finnish  &   Finland, Sweden and NATO                \\
+    5  &                5\_gas\_oil\_sanctions\_energy  &   Gas, Energy and Sanctions               \\
+    6  &    6\_phosphorus\_smoke\_incendiary\_thermite  &   Firearms and Weapons                    \\
+    7  &      7\_orban\_hungary\_hungarian\_hungarians  &   Hungary and Orban                       \\
+    8  &                 8\_ukraine\_will\_russia\_and  &   Ukraine-Russia Issues (General)         \\
+    9  &   9\_moldova\_romania\_transnistria\_moldovan  &   Moldova, Romania and Transnistria       \\
+   10  &                10\_nukes\_nuclear\_nuke\_blah  &   Nuke and Nuclear War                    \\
+   11  &              11\_nukes\_nuclear\_nuke\_russia  &   Nuke and Nuclear War                    \\
+   12  &                    12\_war\_wars\_won\_people  &   War                                     \\
+   13  &     13\_zelensky\_zelenskyy\_security\_munich  &   Zelensky                                \\
+   14  &                  14\_lying\_lie\_russia\_lies  &   Russia Truth or Lie                     \\
+   15  &           15\_threat\_provoking\_russia\_fear  &   Russian invasion of Ukraine             \\
+   16  &                   16\_he\_ukraine\_biden\_hes  &   Biden                                   \\
+   17  &            17\_ukraine\_country\_russia\_been  &   Ukraine-Russia Issues (General)         \\
+   18  &                  18\_he\_trump\_him\_outsider  &   Trump                                   \\
+   19  &               19\_donetsk\_fires\_firms\_osce  &   Ukraine-Russia War Updates              \\
+   20  &           20\_artillery\_target\_modern\_guns  &   Firearms and Weapons                    \\
+   21  &              21\_kyiv\_mayor\_local\_midnight  &   Kyiv                                    \\
+   22  &               22\_barrel\_bore\_center\_lathe  &   Military Industry                       \\
+   23  &            23\_invading\_russia\_invade\_want  &   Russian invasion of Ukraine             \\
+   24  &                24\_fight\_death\_raped\_women  &   Civilians and Casualties                \\
+   25  &            25\_money\_economy\_defaulted\_pay  &   Economy                                 \\
+   26  &           26\_crimea\_bridge\_ukraine\_region  &   Crimea Bridge                           \\
+   27  &            27\_china\_chinese\_russia\_zeihan  &   Russia and China                        \\
+   28  &                  28\_facts\_lie\_truth\_lying  &   Media Truth or Lie                      \\
+   30  &           30\_azov\_azovstal\_battalion\_nazi  &   Azov Battalion                          \\
+   32  &     32\_germany\_german\_bundeswehr\_pacifist  &   Germany and German Army (Bundeswehr)    \\
+   34  &      34\_invasion\_invade\_country\_secession  &   Russian invasion of Ukraine             \\
+   36  &             36\_ammo\_dumps\_dump\_explosions  &   Ukraine-Russia War Updates              \\
+   37  &       37\_reactor\_reactors\_chernobyl\_water  &   Chernobyl Reactors                      \\
+   38  &             38\_pray\_slava\_ukraine\_ukraini  &   Pray for Peace in Ukraine               \\
+   39  &               39\_combat\_troops\_army\_troop  &   Combat, Army and Troops                 \\
+   40  &                     40\_asset\_trump\_he\_his  &   Trump                                   \\
+   41  &          41\_slava\_ukraini\_heroyam\_valhall  &   Ukraine Troops                          \\
+   42  &           42\_turkey\_erdogan\_turkish\_kurds  &   Turkey and Erdogan                      \\
+   45  &           45\_vodka\_hookers\_drinking\_drink  &   Russia Troops                           \\
+   47  &        47\_afghanistan\_taliban\_iraq\_afghan  &   Taliban Iraq and Afghan                 \\
+   48  &                   48\_russia\_ussr\_sucks\_su  &   Russia and USSR                         \\
+   49  &              49\_strike\_icbms\_icbm\_nuclear  &   Nuke and Nuclear War                    \\
+   50  &        50\_ruzzia\_ruzzian\_ruzzians\_ruzzias  &   Russian invasion of Ukraine             \\
+   51  &       51\_airspace\_flights\_aviation\_closed  &   Aerial warfare                          \\
+   52  &    52\_estonia\_estonian\_language\_estonians  &   Estonia                                 \\
+   53  &               53\_nazi\_nazis\_jewish\_racist  &   Nazi                                    \\
+   54  &           54\_threats\_threat\_doomsday\_fear  &   Russian invasion of Ukraine             \\
+   55  &                       55\_tank\_crew\_m4\_t34  &   Firearms and Weapons                    \\
+   56  &             56\_crimes\_crime\_war\_hiroshima  &   Atomic bombings of Hiroshima            \\
+   57  &          57\_euc\_offroad\_onewheel\_electric  &   Military Industry                       \\
+   60  &   60\_kaliningrad\_lithuania\_nuclear\_baltic  &   Three Baltic Countries                  \\
+   61  &       61\_russian\_idiotic\_russians\_fucking  &   Russian invasion of Ukraine             \\
+   62  &        62\_missiles\_missile\_cruise\_systems  &   Firearms and Weapons                    \\
+   64  &            64\_trump\_would\_putin\_president  &   Trump and Putin                         \\
+   65  &         65\_ukrainians\_ukrainian\_them\_kill  &   Ukraine and Ukrainians                  \\
+   66  &  66\_soldiers\_surrender\_russian\_filtration  &   Ukraine-Russia War Updates              \\
+   68  &  68\_republican\_republicans\_party\_abortion  &   Republican Party and Republicans        \\
+   71  &                71\_biden\_trump\_bike\_bidens  &   Biden                                   \\
+   72  &         72\_javelins\_javelin\_tows\_training  &   US Firearms and Weapons                 \\
+   74  &                74\_lose\_winning\_losing\_win  &   Ukraine-Russia War Updates              \\
+   77  &               77\_himars\_range\_depots\_ammo  &   US Firearms and Weapons                 \\
+   80  &         80\_artillery\_rounds\_shells\_depots  &   Firearms and Weapons                    \\
+   81  &       81\_poland\_polish\_investment\_polands  &   Poland                                  \\
+   83  &           83\_plane\_flight\_thread\_tracking  &   Air Battle                              \\
+   86  &                 86\_navy\_sunk\_moskva\_ships  &   Ukraine-Russia War Updates - Moskva     \\
+   87  &           87\_plane\_presidential\_moscow\_ra  &   Putin                                   \\
+   88  &                    88\_ww3\_ww2\_torch\_wwiii  &   World War III                           \\
+   89  &          89\_school\_18\_graduated\_recruiter  &   Combat, Army and Troops                 \\
+   91  &     91\_losses\_casualties\_killed\_ukrainian  &   Civilians and Casualties                \\
+   92  &              92\_nazis\_nazi\_ukrainians\_are  &   Nazi                                    \\
+   93  &                  93\_her\_troops\_empire\_fed  &   Combat, Army and Troops                 \\
+   95  &                      95\_nukes\_he\_nuke\_hes  &   Nuke and Nuclear War                    \\
+   96  &                 96\_grain\_ports\_port\_allow  &   Grain Ports                             \\
+
+
+   Dataset_2_topics_dict = \
+   {
+     0  : [                            "0_putin_him_he_his",  "Putin"                                    ],
+     1  : [                     "1_china_taiwan_chinese_xi",  "China"                                    ],
+     2  : [         "2_kherson_forces_lysychansk_offensive",  "Ukraine-Russia War Updates"               ],
+     3  : [                         "3_ship_ships_navy_sea",  "Ships and Navy"                           ],
+     5  : [                  "5_india_indian_pakistan_modi",  "India and Pakistan"                       ],
+     6  : [                  "6_nato_members_alliance_join",  "Nato and Alliance"                        ],
+     7  : [                 "7_nukes_nuclear_nuke_tactical",  "Nuke and Nuclear War"                     ],
+     8  : [                   "8_nukes_nuclear_nuke_launch",  "Nuke and Nuclear War"                     ],
+     9  : [                  "9_poland_polish_poles_warsaw",  "Poland"                                   ],
+    10  : [     "10_zelensky_zelenskyy_president_zelenskiy",  "Zelensky"                                 ],
+    11  : [               "11_finland_sweden_finnish_finns",  "Finland_Sweden"                           ],
+    12  : [      "12_israel_israeli_palestine_palestinians",  "Israel and Palestine"                     ],
+    13  : [             "13_germany_germans_german_bashing",  "Germany"                                  ],
+    14  : [       "14_biden_trump_administration_president",  "Biden and Trump"                          ],
+    16  : [           "16_weapons_artillery_ammo_equipment",  "Firearms and Weapons"                     ],
+    17  : [                   "17_winter_weather_cold_snow",  "Winter and Weather Impact"                ],
+    18  : [                    "18_slava_glory_heroes_love",  "Heroes"                                   ],
+    20  : [                    "20_macron_le_france_french",  "France and Macron"                        ],
+    23  : [                "23_bridge_bridges_kerch_crimea",  "Crimean Bridge"                           ],
+    24  : [                "24_serbia_kosovo_serbs_serbian",  "Serbia and Kosovo"                        ],
+    25  : [                "25_nukes_nuke_nuclear_tactical",  "Nuke and Nuclear War"                     ],
+    26  : [                   "26_un_council_veto_security",  "UN Security Council"                      ],
+    27  : [               "27_turkey_erdogan_turkish_turks",  "Turkey and Erdogan"                       ],
+    28  : [               "28_ruzzia_ruzzians_ruzzian_spet",  "Russia"                                   ],
+    29  : [         "29_hungary_orban_hungarian_hungarians",  "Hungary and Orban"                        ],
+    30  : [                 "30_visas_visa_tourists_asylum",  "Asylum Refugee Visa"                      ],
+    31  : [                      "31_nazi_nazis_nazism_neo",  "Nazi"                                     ],
+    32  : [                  "32_air_superiority_aa_planes",  "Aerial warfare"                           ],
+    33  : [                   "33_azov_battalion_neo_nazis",  "Azov Battalion"                           ],
+    35  : [                     "35_nazis_nazi_neo_bandera",  "Neo-Nazi"                                 ],
+    36  : [          "36_kadyrov_chechens_chechnya_chechen",  "Chechen and Kadyrov"                      ],
+    38  : [                      "38_korea_north_nk_korean",  "North Korea"                              ],
+    39  : [       "39_numbers_casualties_estimates_wounded",  "Civilians and Casualties"                 ],
+    40  : [                "40_pipeline_pipelines_nord_gas",  "Nord Stream"                              ],
+    41  : [ "41_mobilization_conscripts_training_mobilized",  "Conscription in Russia"                   ],
+    42  : [                     "42_billion_aid_money_debt",  "Economy"                                  ],
+    44  : [              "44_russians_culture_stupid_smart",  "Russia"                                   ],
+    45  : [                      "45_oil_gas_energy_prices",  "Energy Prices"                            ],
+    46  : [                     "46_drone_drones_uav_orlan",  "Orlan-10 UAV"                             ],
+    47  : [                     "47_musk_elon_tesla_spacex",  "Elon Musk"                                ],
+    48  : [                 "48_texas_chicago_ohio_florida",  "US"                                       ],
+    49  : [                 "49_crimes_crime_criminals_war",  "War Crimes"                               ],
+    50  : [                "50_germany_german_germans_help",  "Germany"                                  ],
+    51  : [              "51_wounded_casualties_000_killed",  "Civilians and Casualties"                 ],
+    53  : [                     "53_gas_germany_oil_energy",  "Germany Gas Crisis"                       ],
+    54  : [                   "54_losing_winning_lose_lost",  "War"                                      ],
+    55  : [                 "55_ammo_barrels_barrel_shells",  "Firearms and Weapons"                     ],
+    57  : [                              "57_f35_35_f22_22",  "US Air Force"                             ],
+    58  : [                        "58_leg_cat_blood_wound",  "Civilians and Casualties"                 ],
+    59  : [                  "59_vodka_alcohol_drunk_drink",  "Russia Troops"                            ],
+    60  : [               "60_plant_iaea_zaporizhzhia_znpp",  "Zaporizhzhia Plant"                       ],
+    62  : [                  "62_budget_spending_aid_spend",  "Financial Aid to Ukraine"                 ],
+    63  : [      "63_armenia_azerbaijan_armenian_armenians",  "Armenia and Azerbaijan"                   ],
+    64  : [                     "64_eu_europe_brexit_union",  "EU and Brexit"                            ],
+    66  : [       "66_chernobyl_radiation_radioactive_dose",  "Chernobyl Plant"                          ],
+    67  : [        "67_genocide_group_cleansing_convention",  "Genocide"                                 ],
+    68  : [               "68_nato_join_joining_membership",  "joining NATO"                             ],
+    69  : [        "69_newsweek_tabloid_journalism_newsmax",  "Media"                                    ],
+    70  : [      "70_taliban_afghanistan_afghan_tajikistan",  "Taliban Afghan"                           ],
+    72  : [            "72_sanctions_working_sanction_cuba",  "Sanctions against Russia"                 ],
+    73  : [                            "73_a10_10_cas_usaf",  "US Air Force"                             ],
+    74  : [              "74_erdogan_turkey_turkish_erdoan",  "Turkey and Erdogan"                       ],
+    75  : [                  "75_drones_drone_iran_iranian",  "Iranian drones"                           ],
+    76  : [           "76_invade_invasion_invaders_invaded",  "Russian invasion of Ukraine"              ],
+    77  : [           "77_crimes_crime_criminals_civilians",  "Civilians and Casualties"                 ],
+    78  : [                 "78_cia_spies_spy_intelligence",  "CIA Spies"                                ],
+    80  : [              "80_radar_missile_battery_surface",  "Firearms and Weapons"                     ],
+    81  : [            "81_germany_german_germans_germanys",  "Germany"                                  ],
+    82  : [              "82_leopard_poland_leopards_tanks",  "Poland Militray Aid to Ukraine"           ],
+    83  : [    "83_propaganda_lies_propagandists_malicious",  "Malicious Propaganda"                     ],
+    85  : [                      "85_map_maps_google_maxar",  "Google and Maxar"                         ],
+    86  : [          "86_alaska_alaskans_alaskan_anchorage",  "Alaska"                                   ],
+    87  : [               "87_japan_japanese_islands_kuril",  "Japan and Kuril"                          ],
+    88  : [                         "88_fox_cnn_news_msnbc",  "Fox and CNN"                              ],
+    89  : [    "89_peace_negotiations_negotiate_compromise",  "Peace Negotiation"                        ],
+    90  : [                "90_ammo_artillery_dumps_shells",  "Firearms and Weapons"                     ],
+    91  : [  "91_belarus_belarusian_lukashenko_belarusians",  "Belarus"                                  ],
+    92  : [                    "92_fire_fires_burning_burn",  "Ukraine-Russia War Updates"               ],
+    94  : [               "94_wagner_group_pmc_mercenaries",  "Wagner Mercenaries"                       ],
+    95  : [      "95_moldova_transnistria_romania_moldovan",  "Moldova, Romania and Transnistria"        ],
+    97  : [                "97_himars_himar_paging_coolest",  "US Firearms and Weapons"                  ],
+    98  : [             "98_kissinger_nixon_henry_cambodia",  "20th Century American Politicians"        ],
