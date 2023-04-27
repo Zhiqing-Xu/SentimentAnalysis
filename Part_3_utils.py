@@ -250,7 +250,7 @@ def Load_spacy():
 # Define a function for identifying language (whether English).
 def is_English(text_str, nlp):
     doc = nlp(text_str)
-    detect_language = doc._.language["language"] 
+    detect_language = doc._.language["language"]
     score           = doc._.language["score"]
     return (detect_language == "en"), detect_language, score
 
@@ -260,7 +260,7 @@ def is_English_batch_process(text_list, nlp):
     score_list = []
     for idx, doc in enumerate(nlp.pipe(text_list, n_process = 4, batch_size = 2000)):
         lang_detect_result  =  doc._.language
-        detect_language     =  lang_detect_result["language"] 
+        detect_language     =  lang_detect_result["language"]
         score               =  lang_detect_result["score"]
         ifEnglish_list.append(detect_language == "en")
         dtct_lang_list.append(detect_language)
@@ -268,13 +268,13 @@ def is_English_batch_process(text_list, nlp):
     return ifEnglish_list, dtct_lang_list, score_list
 
 
-# All-Caps Text will be detected as German.
+# All-Caps Text will be detected as German. 
 # Very short text will be detected as random language. 
-# print(is_English(  "Some English Text are often FALSEly identified" ))
-# print(is_English(  "happy birthday"                                 ))  
-# print(is_English(  "happy birthday to you my little sweetie"        ))
-# print(is_English(  "Le client est très important merci"             ))
-# print(is_English(  "WHAT FUCKING LANGUAGE IS MY FUCKING PHONE IN"   ))  
+# print(is_English(  "Some English Text are often FALSEly identified" )) 
+# print(is_English(  "happy birthday"                                 )) 
+# print(is_English(  "happy birthday to you my little sweetie"        )) 
+# print(is_English(  "Le client est très important merci"             )) 
+# print(is_English(  "WHAT FUCKING LANGUAGE IS MY FUCKING PHONE IN"   )) 
 
 
 
@@ -481,7 +481,6 @@ if __name__ == "__main__":
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$#
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$#
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$#
-
 
 
 
