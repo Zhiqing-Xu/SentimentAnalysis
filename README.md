@@ -3,11 +3,16 @@
 
 we leverage advanced deep learning methodologies to conduct a robust sentiment analysis on social media conversations surrounding the Ukraine-Russia conflict. Our methodology incorporates the training of numerous sentiment classification models, starting with four non-neural network baseline models. (i.e., (1) logistic regression, (2) decision tree classifier, (3) Gaussian Na¨ıve Bayes and (4) XGBoost classifier), using a dataset that contains over 550,000 tweets that have had their sentiments already analyzed and recorded as binary values 0 (negative) and 1 (positive). The data processing pipelines for training baselines are shown below. 
 
-![image](https://user-images.githubusercontent.com/47986787/235311492-c96a757b-3038-42b3-8d09-30fc072cf2dd.png)
+<p align="center">
+  <img width="1000"  src="https://user-images.githubusercontent.com/47986787/235311492-c96a757b-3038-42b3-8d09-30fc072cf2dd.png">
+</p>
 
 We have also trained a 3-layer multilayer perceptron (MLP) classifier and a DistilBERT-based classifier based on the state-of-the-art NLP techniques. Apart from these binary sentiment classifiers, we also train a multilabel classification model that is capable of predicting the 8 primary bipolar emotions (joy versus sadness, anger versus fear, trust versus disgust, and surprise versus anticipation) from Robert Plutchik’s wheel of emotions shown below. 
 
-![image](https://user-images.githubusercontent.com/47986787/235311766-7ddfcc15-7475-4455-9b84-ebee53bb1162.png)
+<p align="center">
+  <img width="600"  src="https://user-images.githubusercontent.com/47986787/235311766-7ddfcc15-7475-4455-9b84-ebee53bb1162.png">
+</p>
+
 
 We utilize tweets from the SemEval2018 Task 1E-c emotion classification dataset to perform fine-tuning on the pretrained DistilBERT model. The dataset also contains binary labels 0 (negative) and 1 (positive) for optimism, pessimism and love. These labels are used to train 3 additional DistilBERT-based classifiers for predicting the existence of these emotions. Models trained by others are also used as comparisons to our models, including VADER (Valence Aware Dictionary and sentiment Reasoner) and a pre-trained DistilBERT-based threefold sentiment classification model (from https://huggingface.co/Souvikcmsa/ SentimentAnalysisDistillBERT).
 
