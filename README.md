@@ -20,17 +20,39 @@ These machine learning-based sentiment analysis models are then implemented to i
   <img width="600"  src="https://user-images.githubusercontent.com/47986787/235312144-f5f51f06-b5e2-426b-a878-15b8525d1e76.png">
 </p>
 
-In order to identify factors/reasons/topics that drive sentiment, we utilize [BERTopic](https://github.com/MaartenGr/BERTopic) to discover the most influential topics. We analyze the sentiments of each comment under these hot topics and study the public opinion regarding the Russia-Ukraine War as well as other related international events. The analysis can be used to explore the most concerning topics and provide suggestions to the Ukrainian government and international NGOs. Some results are shown below, 
+In order to identify factors/reasons/topics that drive sentiment, we utilize [BERTopic](https://github.com/MaartenGr/BERTopic) to automatically discover the most influential topics. We analyze the sentiments of each comment under these hot topics and study the public opinion regarding the Russia-Ukraine War as well as other related international events. We use hierachical clustering to identify topic clusters shown by the dendrogram below.
+
+<p align="center">
+  <img width="600"  src="https://user-images.githubusercontent.com/47986787/235312474-ccaf1eb0-5eaf-4ec9-9c30-5e2f3aa9716c.png">
+</p>
+
+The analysis can be used to explore the most concerning topics and provide suggestions to the Ukrainian government and international NGOs. Some results are shown below, 
 
 ### Emotions Detected in the Topic ``Pray for Ukraine``
-
 <p align="center">
   <img width="600"  src="https://user-images.githubusercontent.com/47986787/235312258-efddbc53-3ece-469e-bb67-c5c2e913a957.png">
 </p>
 
+### Emotions Detected in the Topic ``Ukrainian Heroes
+<p align="center">
+  <img width="600"  src="https://user-images.githubusercontent.com/47986787/235312377-7b890df2-1884-40a8-a796-e739d8960388.png">
+</p>
 
-Through a comprehensive analysis of the comments scrapped from Twitter and Reddit, we explore public sen- timent towards Russia and Ukraine, perceptions of President Zelensky, concerns about casualties, debates over re- sponsibility for the conflict, and dissatisfaction with NATO’s involvement. This analysis is intended to serve as a consulting tool for the Ukrainian government and international NGOs to analyze how Ukraine is perceived inter- nationally and provide valuable recommendations to improve Ukraine’s international presence and image. All our models and results are available through https://github.com/Zhiqing-Xu/SentimentAnalysis.
+### Sentiment Analysis for Topics Cluster ``Firearms and Weapons``
+<p align="center">
+  <img width="600"  src="https://user-images.githubusercontent.com/47986787/235312421-cd777825-ab48-4d91-a7a4-fe9ed6ad81d9.png">
+</p>
 
+### Sentiment Analysis for Topics Cluster ``Countries and NATO Alliance``
+<p align="center">
+  <img width="600"  src="https://user-images.githubusercontent.com/47986787/235312559-79d70a46-97d2-4c33-94e1-fd867d95e982.png">
+</p>
+
+Through a comprehensive analysis of the comments scrapped from Twitter and Reddit, we explore public sen- timent towards Russia and Ukraine, perceptions of President Zelensky, concerns about casualties, debates over re- sponsibility for the conflict, and dissatisfaction with NATO’s involvement. This analysis is intended to serve as a consulting tool for the Ukrainian government and international NGOs to analyze how Ukraine is perceived inter- nationally and provide valuable recommendations to improve Ukraine’s international presence and image. 
+
+<p align="center">
+  <img width="600"  src="https://user-images.githubusercontent.com/47986787/235312506-3fdef27e-fa90-422f-b335-2170f9a31e2b.png">
+</p>
 
 
 
