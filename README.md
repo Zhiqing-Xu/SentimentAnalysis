@@ -23,9 +23,10 @@ These machine learning-based sentiment analysis models are then implemented to i
 In order to identify factors/reasons/topics that drive sentiment, we utilize [BERTopic](https://github.com/MaartenGr/BERTopic) to discover the most influential topics. We analyze the sentiments of each comment under these hot topics and study the public opinion regarding the Russia-Ukraine War as well as other related international events. The analysis can be used to explore the most concerning topics and provide suggestions to the Ukrainian government and international NGOs. Some results are shown below, 
 
 ### Pray for Ukraine
-![image](https://user-images.githubusercontent.com/47986787/235312230-54b1bb97-6c1b-4620-aeb8-a8db41831357.png)
 
-![image](https://user-images.githubusercontent.com/47986787/235312223-608b8ef3-6fd4-4296-91fd-d77474387f9e.png)
+<p align="center">
+  <img width="600"  src="https://user-images.githubusercontent.com/47986787/235312258-efddbc53-3ece-469e-bb67-c5c2e913a957.png">
+</p>
 
 
 Through a comprehensive analysis of the comments scrapped from Twitter and Reddit, we explore public sen- timent towards Russia and Ukraine, perceptions of President Zelensky, concerns about casualties, debates over re- sponsibility for the conflict, and dissatisfaction with NATO’s involvement. This analysis is intended to serve as a consulting tool for the Ukrainian government and international NGOs to analyze how Ukraine is perceived inter- nationally and provide valuable recommendations to improve Ukraine’s international presence and image. All our models and results are available through https://github.com/Zhiqing-Xu/SentimentAnalysis.
