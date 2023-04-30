@@ -48,7 +48,7 @@ The analysis can be used to explore the most concerning topics and provide sugge
   <img width="600"  src="https://user-images.githubusercontent.com/47986787/235312559-79d70a46-97d2-4c33-94e1-fd867d95e982.png">
 </p>
 
-Through a comprehensive analysis of the comments scrapped from Twitter and Reddit, we explore public sen- timent towards Russia and Ukraine, perceptions of President Zelensky, concerns about casualties, debates over re- sponsibility for the conflict, and dissatisfaction with NATO’s involvement. This analysis is intended to serve as a consulting tool for the Ukrainian government and international NGOs to analyze how Ukraine is perceived inter- nationally and provide valuable recommendations to improve Ukraine’s international presence and image. 
+Through a comprehensive analysis of the comments scrapped from Twitter and Reddit, we explore public sentiment towards different aspects of the war, i.e., concerns about casualties, debates over responsibility for the conflict, etc. This analysis is intended to serve as a consulting tool for the Ukrainian government and international NGOs to analyze how Ukraine is perceived internationally and provide valuable recommendations to improve Ukraine’s international presence and image. 
 
 <p align="center">
   <img width="600"  src="https://user-images.githubusercontent.com/47986787/235312506-3fdef27e-fa90-422f-b335-2170f9a31e2b.png">
