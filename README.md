@@ -1,6 +1,6 @@
 # <center> <font size="20">  Sentiment Analysis  </font> </center>
 
-we leverage advanced deep learning methodologies to conduct a robust sentiment analysis on social media conversations surrounding the Ukraine-Russia conflict. Our methodology incorporates the training of numerous sentiment classification models, starting with four non-neural network baseline models. (i.e., (1) logistic regression, (2) decision tree classifier, (3) Gaussian Na¨ıve Bayes and (4) XGBoost classifier), using a dataset that contains over 550,000 tweets that have had their sentiments already analyzed and recorded as binary values 0 (negative) and 1 (positive). The data processing pipelines for training baselines are shown below. 
+We leverage advanced deep learning methodologies to conduct a robust sentiment analysis on social media conversations surrounding the Ukraine-Russia conflict. Our methodology incorporates the training of numerous sentiment classification models, starting with four non-neural network baseline models. (i.e., (1) logistic regression, (2) decision tree classifier, (3) Gaussian Na¨ıve Bayes and (4) XGBoost classifier), using a dataset that contains over 550,000 tweets that have had their sentiments already analyzed and recorded as binary values 0 (negative) and 1 (positive). The data processing pipelines for training baselines are shown below. 
 
 <p align="center">
   <img width="1000"  src="https://user-images.githubusercontent.com/47986787/235311492-c96a757b-3038-42b3-8d09-30fc072cf2dd.png">
