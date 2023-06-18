@@ -33,7 +33,7 @@ The analysis can be used to explore the most concerning topics and provide sugge
   <img width="600"  src="https://user-images.githubusercontent.com/47986787/235312258-efddbc53-3ece-469e-bb67-c5c2e913a957.png">
 </p>
 
-### Emotions Detected in the Topic ``Ukrainian Heroes
+### Emotions Detected in the Topic ``Ukrainian Heroes``
 <p align="center">
   <img width="600"  src="https://user-images.githubusercontent.com/47986787/235312377-7b890df2-1884-40a8-a796-e739d8960388.png">
 </p>
